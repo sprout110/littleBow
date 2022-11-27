@@ -19,22 +19,25 @@ handler = WebhookHandler('2e51efac60ec2bcef3cd8a9c9b849796')
 line_bot_api.push_message('1657687512', TextSendMessage(text='你可以開始了'))
 
 # 監聽所有來自 /callback 的 Post Request
-@app.route("/callback", methods=['POST'])
+#@app.route("/callback", methods=['POST'])
+@app.route("/", methods=["GET", "POST"])
 def callback():
-    # get X-Line-Signature header value
-    signature = request.headers['X-Line-Signature']
+    if request.method == "GET":
+        return "Hello Heroku"
+    if request.method == "POST":
+        # get X-Line-Signature header value
+        signature = request.headers['X-Line-Signature']
+        # get request body as text
+        body = request.get_data(as_text=True)
+        #app.logger.info("Request body: " + body)
 
-    # get request body as text
-    body = request.get_data(as_text=True)
-    #app.logger.info("Request body: " + body)
+        # handle webhook body
+        try:
+            handler.handle(body, signature)
+        except InvalidSignatureError:
+            abort(400)
 
-    # handle webhook body
-    try:
-        handler.handle(body, signature)
-    except InvalidSignatureError:
-        abort(400)
-
-    return 'OK'
+        return 'OK'
 
 #訊息傳遞區塊
 @handler.add(MessageEvent, message=TextMessage)
