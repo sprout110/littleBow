@@ -26,7 +26,7 @@ def callback():
 
     # get request body as text
     body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
+    #app.logger.info("Request body: " + body)
 
     # handle webhook body
     try:
@@ -45,5 +45,5 @@ def handle_message(event):
 #主程式
 import os
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 80))
-    app.run(host='0.0.0.0', port=port)
+    #port = int(os.environ.get('PORT', 80))
+    app.run()
