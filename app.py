@@ -16,7 +16,7 @@ line_bot_api = LineBotApi('PkZbi8GG6shNjSE2XFuGwUSGnq47syMHGIm+d+jTmyARlldwnK2Ag
 # 必須放上自己的Channel Secret
 handler = WebhookHandler('2e51efac60ec2bcef3cd8a9c9b849796')
 
-#line_bot_api.push_message('1657687512', TextSendMessage(text='你可以開始了'))
+line_bot_api.push_message('1657687512', TextSendMessage(text='你可以開始了'))
 
 @app.route('/')
 def index():
