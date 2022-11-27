@@ -1,4 +1,2 @@
 flask
-gunicorn #¦b Heroku ¤W¥Î
-
-
+gunicorn
