@@ -1,3 +1,4 @@
-line-bot-sdk
 flask
+gunicorn #¦b Heroku ¤W¥Î
+
 
