@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from pymongo import MongoClient
+import pymongo
 import certifi
 import urllib.parse
 import datetime
@@ -22,18 +23,19 @@ def constructor():
 def write_user_stock_fountion(stock, bs, price):  
     db=constructor()
     collect = db['mystock']
-    collect.insert({"stock": stock,
+    collect.insert_one({"stock": stock,
                     "data": 'care_stock',
                     "bs": bs,
                     "price": float(price),
-                    "date_info": datetime.datetime.utcnow()
+                    "date_info": datetime.utcnow()
                     })
     
 #----------------------------殺掉使用者的股票--------------------------
 def delete_user_stock_fountion(stock):  
     db=constructor()
     collect = db['mystock']
-    collect.remove({"stock": stock})
+    collect.delete_many({"stock": stock})
+    #coll.delete_one({'username':'ketio'})
     
 #----------------------------秀出使用者的股票--------------------------
 def show_user_stock_fountion():  
