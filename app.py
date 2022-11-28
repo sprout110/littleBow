@@ -64,9 +64,9 @@ def handle_message(event):
     
     elif re.match('刪除[0-9]{4}',usespeak): # 刪除存在資料庫裡面的股票
         #mongodb.delete_user_stock_fountion(stock=usespeak[2:])
-        #line_bot_api.push_message(uid, TextSendMessage(usespeak+'已經刪除成功'))
-        #return 0
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(usespeak[0:4]+'已經刪除成功'))
+        line_bot_api.push_message(uid, TextSendMessage(usespeak+'已經刪除成功'))
+        return 0
+        #line_bot_api.reply_message(event.reply_token,TextSendMessage(usespeak[2:]+'已經刪除成功'))
 
     else:
         message = TextSendMessage(text=event.message.text)
