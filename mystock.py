@@ -22,5 +22,5 @@ def get_stock_realtime(stock):
         except:
             s = '-'
     result = f'{title.get_text()} : {a.get_text()}({s}{b.get_text()})' 
-    print(result) #印出結果
+    #print(result) #印出結果
     return result

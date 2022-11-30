@@ -1,32 +1,19 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Aug 18 01:00:17 2018
-
-@author: linzino
-"""
-
-
 from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
 import mongodb
-#import mystock
+import mystock
 import re
 
 app = Flask(__name__)
 
 # 必須放上自己的Channel Access Token
-#line_bot_api = LineBotApi('')
-# 必須放上自己的Channel Secret
-#handler = WebhookHandler('你的Secret')
-
-#line_bot_api.push_message('你的ID', TextSendMessage(text='你可以開始了'))
-
-# 必須放上自己的Channel Access Token
 line_bot_api = LineBotApi('PkZbi8GG6shNjSE2XFuGwUSGnq47syMHGIm+d+jTmyARlldwnK2AgK6bGsq5j+5Ip6vaqDLcW2Hmkf3RkPptwcV0XIvQv8pFP8AYcseOpIOgCKOUT4lZLAp5Qlyf8UuBTAjcobSElNshbNk/+CBG5gdB04t89/1O/w1cDnyilFU=')
 # 必須放上自己的Channel Secret
 handler = WebhookHandler('2e51efac60ec2bcef3cd8a9c9b849796')
+
+#line_bot_api.push_message('你的ID', TextSendMessage(text='你可以開始了'))
 
 @app.route('/')
 def index():
