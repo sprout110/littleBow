@@ -63,7 +63,7 @@ def handle_message(event):
         line_bot_api.push_message(uid, TextSendMessage(usespeak[1:]+'即時股價: '+querystock))
         return 0
 
-    elif re.match('@K', usespeak.upper()):
+    elif usespeak[:2].upper() == "@K": # re.match('@K', usespeak.upper())
         input_word = usespeak.replace(" ","") #合併字串取消空白
         stock_name = input_word[2:6] #2330
         start_date = input_word[6:] #2020-01-01

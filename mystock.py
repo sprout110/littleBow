@@ -28,7 +28,7 @@ def get_stock_realtime(stock):
     #print(result) #印出結果
     return result
 
-def plot_stcok_k_chart(IMGUR_CLIENT_ID,stock="0050" , date_from='2020-01-01' ):
+def plot_stcok_k_chart(IMGUR_CLIENT_ID, stock="0050" , date_from='2020-01-01' ):
     """
     進行個股K線繪製，回傳至於雲端圖床的連結。將顯示包含5MA、20MA及量價關係，起始預設自2020-01-01起迄昨日收盤價。
     :stock :個股代碼(字串)，預設0050。
@@ -37,7 +37,7 @@ def plot_stcok_k_chart(IMGUR_CLIENT_ID,stock="0050" , date_from='2020-01-01' ):
     stock = str(stock)+".tw"
     # df = web.DataReader(stock, 'yahoo', date_from) 
     df = yf.download(stock, date_from) 
-    mpf.plot(df,type='candle',mav=(5,20),volume=True, ylabel=stock.upper()+' Price' ,savefig='testsave.png')
+    mpf.plot(df, type='candle', mav=(5,20), volume=True, ylabel=stock.upper()+' Price' , savefig='testsave.png')
     PATH = "testsave.png"
     im = pyimgur.Imgur(IMGUR_CLIENT_ID)
     uploaded_image = im.upload_image(PATH, title=stock+" candlestick chart")
