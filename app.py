@@ -11,7 +11,7 @@ from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
 import mongodb
-import mystock
+#import mystock
 import re
 
 app = Flask(__name__)
