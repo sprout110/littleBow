@@ -1,5 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
+import mplfinance as mpf
+import yfinance as yf
+import pyimgur
 
 def get_stock_realtime(stock):
     # 要抓取的網址
@@ -24,3 +27,21 @@ def get_stock_realtime(stock):
     result = f'{title.get_text()}{a.get_text()}({s}{b.get_text()})' 
     #print(result) #印出結果
     return result
+
+def plot_stcok_k_chart(IMGUR_CLIENT_ID,stock="0050" , date_from='2020-01-01' ):
+    """
+    進行個股K線繪製，回傳至於雲端圖床的連結。將顯示包含5MA、20MA及量價關係，起始預設自2020-01-01起迄昨日收盤價。
+    :stock :個股代碼(字串)，預設0050。
+    :date_from :起始日(字串)，格式為YYYY-MM-DD，預設自2020-01-01起。
+    """
+    stock = str(stock)+".tw"
+    # df = web.DataReader(stock, 'yahoo', date_from) 
+    df = yf.download(stock, date_from) 
+    mpf.plot(df,type='candle',mav=(5,20),volume=True, ylabel=stock.upper()+' Price' ,savefig='testsave.png')
+    PATH = "testsave.png"
+    im = pyimgur.Imgur(IMGUR_CLIENT_ID)
+    uploaded_image = im.upload_image(PATH, title=stock+" candlestick chart")
+    return uploaded_image.link
+
+# Client ID:d82208d3c8f4f9c
+# Client secret:cdc03db440e9d286f5cda8af3ec033d25726956f

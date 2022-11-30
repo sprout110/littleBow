@@ -8,12 +8,16 @@ import re
 
 app = Flask(__name__)
 
+from config import * 
+
 # 必須放上自己的Channel Access Token
 line_bot_api = LineBotApi('PkZbi8GG6shNjSE2XFuGwUSGnq47syMHGIm+d+jTmyARlldwnK2AgK6bGsq5j+5Ip6vaqDLcW2Hmkf3RkPptwcV0XIvQv8pFP8AYcseOpIOgCKOUT4lZLAp5Qlyf8UuBTAjcobSElNshbNk/+CBG5gdB04t89/1O/w1cDnyilFU=')
 # 必須放上自己的Channel Secret
 handler = WebhookHandler('2e51efac60ec2bcef3cd8a9c9b849796')
 
 #line_bot_api.push_message('你的ID', TextSendMessage(text='你可以開始了'))
+
+IMGUR_CLIENT_ID = imgur_client_id
 
 @app.route('/')
 def index():
@@ -59,9 +63,16 @@ def handle_message(event):
         line_bot_api.push_message(uid, TextSendMessage(usespeak[1:]+'即時股價: '+querystock))
         return 0
 
+    elif re.match('@K', usespeak.upper()):
+        input_word = usespeak.replace(" ","") #合併字串取消空白
+        stock_name = input_word[2:6] #2330
+        start_date = input_word[6:] #2020-01-01
+        content = mystock.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock_name, start_date)
+        message = ImageSendMessage(original_content_url=content, preview_image_url=content)
+        line_bot_api.reply_message(event.reply_token, message)
+
     else:
-        message = TextSendMessage(text=event.message.text)
-        line_bot_api.reply_message(event.reply_token,message)
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=event.message.text))
 
 if __name__ == '__main__':
-    app.run(run)
+    app.run()
