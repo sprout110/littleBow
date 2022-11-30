@@ -68,8 +68,8 @@ def handle_message(event):
         return 0
 
     elif re.match('s[0-9]{4}',usespeak): #顯示即時股價
-        querystock = mystock.get_stock_realtime(usespeak[1:])
-        line_bot_api.push_message(uid, TextSendMessage(usespeak[1:]+'即時股價:'+querystock))
+        #querystock = mystock.get_stock_realtime(usespeak[1:])
+        line_bot_api.push_message(uid, TextSendMessage(usespeak[1:]+'即時股價:'))
         return 0
 
     else:
