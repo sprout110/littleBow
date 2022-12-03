@@ -7,6 +7,3 @@ bs4
 pyimgur
 mplfinance
 yfinance
-matplotlib
-pandas_datareader
-pandas

@@ -75,7 +75,7 @@ def handle_message(event):
         else:
             end_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-        content = mystock.plot_stock_k_chart(IMGUR_CLIENT_ID, stock_name, start_date, end_date)
+        content = mystock.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock_name, start_date, end_date)
         message = ImageSendMessage(original_content_url=content, preview_image_url=content)
         line_bot_api.reply_message(event.reply_token, message)
 
