@@ -1,11 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-#import matplotlib.pyplot as plt # 畫圖用
-import mplfinance as mpf # 畫蠟燭圖
-#from pandas_datareader import data
+import mplfinance as mpf
 import yfinance as yf
-#yf.pdr_override()
-#import pandas as pd
 import pyimgur
 
 def get_stock_realtime(stock):
@@ -32,7 +28,7 @@ def get_stock_realtime(stock):
     #print(result) #印出結果
     return result
 
-def plot_stcok_k_chart(IMGUR_CLIENT_ID, stock="0050" , date_from='2020-01-01', date_end='2022-12-01' ):
+def plot_stcok_k_chart(IMGUR_CLIENT_ID, stock="0050" , date_from='2020-01-01' ):
     """
     進行個股K線繪製，回傳至於雲端圖床的連結。將顯示包含5MA、20MA及量價關係，起始預設自2020-01-01起迄昨日收盤價。
     :stock :個股代碼(字串)，預設0050。
@@ -40,8 +36,7 @@ def plot_stcok_k_chart(IMGUR_CLIENT_ID, stock="0050" , date_from='2020-01-01', d
     """
     stock = str(stock)+".tw"
     # df = web.DataReader(stock, 'yahoo', date_from) 
-    df = yf.download(stock, date_from, date_end)
-    #mpf.plot(df, type='candle', mav=(5,20), volume=True, ylabel=stock.upper()+' Price')
+    df = yf.download(stock, date_from) 
     mpf.plot(df, type='candle', mav=(5,20), volume=True, ylabel=stock.upper()+' Price' , savefig='testsave.png')
     PATH = "testsave.png"
     im = pyimgur.Imgur(IMGUR_CLIENT_ID)
@@ -50,18 +45,3 @@ def plot_stcok_k_chart(IMGUR_CLIENT_ID, stock="0050" , date_from='2020-01-01', d
 
 # Client ID:d82208d3c8f4f9c
 # Client secret:cdc03db440e9d286f5cda8af3ec033d25726956f
-
-#def plot_stock_k_chart(IMGUR_CLIENT_ID, stock="0050" , start_date='2020-01-01', end_date='2022-12-01'):
-#    df = yf.download(str(stock)+".tw", start_date, end_date)
-#    color=mpf.make_marketcolors(up='red', down='green', inherit=True)
-#    style=mpf.make_mpf_style(base_mpf_style='default', rc=font, marketcolors=color)
-#    PATH = "k_chart.png"
-
-#    mpf.plot(data=df, type='candle', style=style, volume=True, title=str(stock)+".tw",  tight_layout=True, mav=(5,20), figratio=(16, 9), figscale=0.5, savefig=PATH) # 繪製 5, 20 日收盤價均線
-    
-#    im = pyimgur.Imgur(IMGUR_CLIENT_ID)
-#    uploaded_image = im.upload_image(PATH, title=stock+" candlestick chart")
-#    return uploaded_image.link
-
-
-    
