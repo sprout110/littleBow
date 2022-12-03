@@ -70,7 +70,7 @@ def handle_message(event):
         stock_name = input_word[2:6] #2330
         start_date = input_word[6:16] #2020-01-01
 
-        if(usespeak.length() > 16):
+        if(len(usespeak) > 16):
             end_date = input_word[16:26] #2022-12-02
         else:
             end_date = datetime.datetime.now().strftime("%Y-%m-%d")
