@@ -1,9 +1,0 @@
-flask
-gunicorn
-line-bot-sdk
-pymongo
-certifi
-bs4
-pyimgur
-mplfinance
-yfinance
