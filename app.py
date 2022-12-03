@@ -4,7 +4,9 @@ from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
 import mongodb
 import mystock
+import datetime
 import re
+
 
 app = Flask(__name__)
 
@@ -47,27 +49,33 @@ def handle_message(event):
     profile = line_bot_api.get_profile(event.source.user_id)
     uid = profile.user_id #使用者ID
     usespeak=str(event.message.text) #使用者講的話
+
     if re.match('[0-9]{4}[<>][0-9]',usespeak): # 先判斷是否是使用者要用來存股票的
         mongodb.write_user_stock_fountion(stock=usespeak[0:4], bs=usespeak[4:5], price=usespeak[5:])
         line_bot_api.push_message(uid, TextSendMessage(usespeak[0:4]+'已經儲存成功'))
         return 0
-
     
     elif re.match('刪除[0-9]{4}',usespeak): # 刪除存在資料庫裡面的股票
         mongodb.delete_user_stock_fountion(stock=usespeak[2:])
         line_bot_api.push_message(uid, TextSendMessage(usespeak+'已經刪除成功'))
         return 0
 
-    elif re.match('s[0-9]{4}',usespeak.lower()): #顯示即時股價
-        querystock = mystock.get_stock_realtime(usespeak[1:])
-        line_bot_api.push_message(uid, TextSendMessage(usespeak[1:]+'即時股價: '+querystock))
+    elif re.match('即時[0-9]{4}',usespeak.lower()): #顯示即時股價
+        querystock = mystock.get_stock_realtime(usespeak[2:])
+        line_bot_api.push_message(uid, TextSendMessage(usespeak[2:]+'即時股價: '+querystock))
         return 0
 
-    elif usespeak[:2].upper() == "@K": # re.match('@K', usespeak.upper())
-        input_word = usespeak.replace(" ","") #合併字串取消空白
+    elif usespeak[:2].upper() == "K線": # re.match('@K', usespeak.upper())
+        input_word = usespeak.replace(" ","") #合併字串取消空白, 這要改成用 split 來切字串
         stock_name = input_word[2:6] #2330
-        start_date = input_word[6:] #2020-01-01
-        content = mystock.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock_name, start_date)
+        start_date = input_word[6:16] #2020-01-01
+
+        if(usespeak.length() > 16):
+            end_date = input_word[16:26] #2022-12-02
+        else:
+            end_date = datetime.datetime.now().strftime("%Y-%m-%d")
+
+        content = mystock.plot_stock_k_chart(IMGUR_CLIENT_ID, stock_name, start_date, end_date)
         message = ImageSendMessage(original_content_url=content, preview_image_url=content)
         line_bot_api.reply_message(event.reply_token, message)
 
