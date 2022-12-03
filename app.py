@@ -5,10 +5,9 @@ from linebot.models import *
 import mongodb
 import mystock
 import re
+from config import * 
 
 app = Flask(__name__)
-
-from config import * 
 
 # 必須放上自己的Channel Access Token
 line_bot_api = LineBotApi('PkZbi8GG6shNjSE2XFuGwUSGnq47syMHGIm+d+jTmyARlldwnK2AgK6bGsq5j+5Ip6vaqDLcW2Hmkf3RkPptwcV0XIvQv8pFP8AYcseOpIOgCKOUT4lZLAp5Qlyf8UuBTAjcobSElNshbNk/+CBG5gdB04t89/1O/w1cDnyilFU=')
