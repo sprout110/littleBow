@@ -76,10 +76,3 @@ def handle_message(event):
 
 if __name__ == '__main__':
     app.run()
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
-Security
-Status
