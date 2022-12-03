@@ -53,18 +53,20 @@ def plot_stcok_k_chart(IMGUR_CLIENT_ID, stock="0050" , date_from='2020-01-01', d
 
 def plot_stock_k_chart(IMGUR_CLIENT_ID, stock="0050" , start_date='2020-01-01', end_date='2022-12-01'):
     data = yf.download(str(stock)+".tw", start_date, end_date)
-    print(data)
+    #print(data)
     color=mpf.make_marketcolors(up='red', down='green', inherit=True)
     style=mpf.make_mpf_style(base_mpf_style='default', rc=font, marketcolors=color)
-    
-    mpf.plot(data=data, type='candle', style=style, volume=True, title=str(stock)+".tw", tight_layout=True, mav=(5,20), figratio=(16, 9), figscale=0.5) # 繪製 5, 20 日收盤價均線
-
     PATH = "k_chart.png"
+
+    mpf.plot(data=data, type='candle', style=style, volume=True, title=str(stock)+".tw", 
+             tight_layout=True, mav=(5,20), figratio=(16, 9), figscale=0.5, savefig=PATH) # 繪製 5, 20 日收盤價均線
+
+    
     im = pyimgur.Imgur(IMGUR_CLIENT_ID)
     uploaded_image = im.upload_image(PATH, title=stock+" candlestick chart")
     return uploaded_image.link
 
-plot_stock_k_chart('d82208d3c8f4f9c', '2412', '2022-01-01', '2022-12-03')
+#plot_stock_k_chart('d82208d3c8f4f9c', '2412', '2022-01-01', '2022-12-03')
 #plot_stcok_k_chart('d82208d3c8f4f9c', '2412', '2022-01-01', '2022-12-03')
 
     
