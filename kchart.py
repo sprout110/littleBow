@@ -11,7 +11,7 @@ class KChart(UserSpeak):
         super().__init__(msg)
     def process(self):
         content = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, self.msg[1:], '2022-01-01')
-        self.result = msg + ' KChart OK' 
+        self.result = self.msg + ' KChart OK' 
         return ImageSendMessage(original_content_url=content, preview_image_url=content)
 
     def plot_stcok_k_chart(self, IMGUR_CLIENT_ID, stock="0050" , date_from='2020-01-01' ):
