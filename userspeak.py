@@ -5,6 +5,7 @@ class UserSpeak:
         self.msg = msg
     def process(self):
         self.result = self.msg
+        return [self.msg]
 
 
 

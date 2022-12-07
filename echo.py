@@ -7,4 +7,4 @@ class Echo(UserSpeak):
     def process(self):
         textSendMessage = TextSendMessage(self.msg)
         self.result = 'Send "' + self.msg + '" OK'
-        return textSendMessage
+        return [textSendMessage]

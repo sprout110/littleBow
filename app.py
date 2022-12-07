@@ -29,7 +29,8 @@ def handle_message(event):
 
     Bot = UserSay(event.message.text)
     returnMessage = Bot.process()
-    line_bot_api.push_message(uid, returnMessage)
+    for reply in returnMessage:
+        line_bot_api.push_message(uid, reply)
 
     return 0
 

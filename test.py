@@ -17,7 +17,7 @@ class MyTest(UserSpeak):
         imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, self.msg[1:5], self.startTime)
         self.result = self.msg[1:5] + ' KChart OK: ' + imgUrl
 
-        return ImageSendMessage(original_content_url = imgUrl, preview_image_url = imgUrl)
+        return [ImageSendMessage(original_content_url = imgUrl, preview_image_url = imgUrl)]
 
     def plot_stcok_k_chart(self, IMGUR_CLIENT_ID, stock = "0050" , startTime = '2020-01-01'):
         stock = str(stock)+".tw"

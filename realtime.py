@@ -8,7 +8,7 @@ class RealTime(UserSpeak):
     def process(self):
         stock = str(self.msg[1:5]) + ".tw"
         self.result = stock + ' RealTime OK' 
-        return TextSendMessage(self.result)
+        return [TextSendMessage(self.result), TextSendMessage('Test second message push')]
 
 
 

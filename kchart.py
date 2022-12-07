@@ -14,14 +14,13 @@ class KChart(UserSpeak):
 
     def process(self, startTime = '2020-01-01'):
         self.startTime = startTime
-        imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, self.msg[1:5], self.startTime)
-        self.result = self.msg[1:5] + ' KChart OK: ' + imgUrl
+        stock = str(self.msg[1:5])+".tw"
+        imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , self.startTime)
+        self.result = stock + ' KChart OK ' + imgUrl
 
-        return ImageSendMessage(original_content_url = imgUrl, preview_image_url = imgUrl)
+        return [ImageSendMessage(original_content_url = imgUrl, preview_image_url = imgUrl)]
 
     def plot_stcok_k_chart(self, IMGUR_CLIENT_ID, stock = "0050" , startTime = '2020-01-01'):
-        stock = str(stock)+".tw"
-
         df = yf.download(stock, start = startTime) 
 
         tempImgFile = "testsave.png"
