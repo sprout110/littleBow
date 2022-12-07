@@ -3,21 +3,12 @@ from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
 from module import *
+from home import *
 
 app = Flask(__name__)
 
 line_bot_api = LineBotApi('PkZbi8GG6shNjSE2XFuGwUSGnq47syMHGIm+d+jTmyARlldwnK2AgK6bGsq5j+5Ip6vaqDLcW2Hmkf3RkPptwcV0XIvQv8pFP8AYcseOpIOgCKOUT4lZLAp5Qlyf8UuBTAjcobSElNshbNk/+CBG5gdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('2e51efac60ec2bcef3cd8a9c9b849796')
-
-@app.route('/')
-def index():
-    result = ''
-    for msg in ['I love you!', 's1234', 'test', 'test3']:
-        Bot = UserSay(msg)
-        message = Bot.process()
-        result += '<p>' + Bot.result + '</p>'
-    
-    return result
 
 @app.route('/callback', methods=['POST'])
 def callback():
@@ -37,9 +28,14 @@ def handle_message(event):
     uid = profile.user_id
 
     Bot = UserSay(event.message.text)
-    replyMessage = Bot.process()
-    line_bot_api.reply_message(event.reply_token, replyMessage)
+    returnMessage = Bot.process()
+    line_bot_api.push_message(uid, returnMessage)
+
     return 0
+
+@app.route('/')
+def index():
+    return processIndex()
 
 if __name__ == '__main__':
    app.run()
