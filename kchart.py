@@ -9,20 +9,31 @@ IMGUR_CLIENT_ID = 'd82208d3c8f4f9c'
 class KChart(UserSpeak):
     def __init__(self, msg):
         super().__init__(msg)
-    def process(self):
-        content = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, self.msg[1:], '2022-01-01')
-        self.result = self.msg + ' KChart OK' 
-        return ImageSendMessage(original_content_url=content, preview_image_url=content)
+        startTime = ''
+        endTime = ''
 
-    def plot_stcok_k_chart(self, IMGUR_CLIENT_ID, stock="0050" , date_from='2020-01-01' ):
+    def process(self, startTime = '2020-01-01'):
+        self.startTime = startTime
+        imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, self.msg[1:], self.startTime)
+        self.result = self.msg[1:] + ' KChart OK: ' + imgUrl
+
+        return ImageSendMessage(original_content_url = imgUrl, preview_image_url = imgUrl)
+
+    def plot_stcok_k_chart(self, IMGUR_CLIENT_ID, stock = "0050" , startTime = '2020-01-01'):
         stock = str(stock)+".tw"
 
-        df = yf.download(stock, date_from) 
-        mpf.plot(df, type='candle', mav=(5,20), 
-                volume=True, 
-                ylabel=stock.upper()+' Price' , 
-                savefig='testsave.png')
-        PATH = "testsave.png"
+        df = yf.download(stock, start = startTime) 
+
+        tempImgFile = "testsave.png"
+
+        mpf.plot(df, 
+                type='candle', 
+                mav=(5,20), 
+                volume = True, 
+                ylabel = stock.upper()+' Price' , 
+                savefig = tempImgFile)
+
         im = pyimgur.Imgur(IMGUR_CLIENT_ID)
-        uploaded_image = im.upload_image(PATH, title=stock+" candlestick chart")
+        uploaded_image = im.upload_image(tempImgFile, title = stock + " candlestick chart")
+
         return uploaded_image.link

@@ -12,7 +12,7 @@ handler = WebhookHandler('2e51efac60ec2bcef3cd8a9c9b849796')
 @app.route('/')
 def index():
     result = ''
-    for msg in ['I love you!', 's2412','test','test3']:
+    for msg in ['I love you!', 's1234', 'test', 'test3']:
         Bot = UserSay(msg)
         message = Bot.process()
         result += '<p>' + Bot.result + '</p>'
@@ -39,6 +39,7 @@ def handle_message(event):
     Bot = UserSay(event.message.text)
     replyMessage = Bot.process()
     line_bot_api.reply_message(event.reply_token, replyMessage)
+    return 0
 
 if __name__ == '__main__':
    app.run()
