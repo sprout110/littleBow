@@ -4,12 +4,12 @@ from kchart import KChart
 from test import MyTest
 import re
 
-def UserSay(msg):
+def UserSay(uid, msg):
     if re.match('s[0-9]{4}', msg.lower()):
-        return RealTime(msg)
+        return RealTime(uid, msg)
     elif re.match('k[0-9]{4}', msg.lower()):
-        return KChart(msg)
+        return KChart(uid, msg)
     elif re.match('t[0-9]{4}', msg.lower()):
-        return MyTest(msg)
+        return MyTest(uid, msg)
     else:
-        return Echo(msg)
+        return Echo(uid, msg)

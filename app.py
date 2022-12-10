@@ -22,15 +22,14 @@ def callback():
         abort(400)
     return 'OK'
 
-@handler.add(MessageEvent, message=TextMessage)
+@handler.add(MessageEvent, message = TextMessage)
 def handle_message(event):
     profile = line_bot_api.get_profile(event.source.user_id)
-    uid = profile.user_id
 
-    Bot = UserSay(event.message.text)
+    Bot = UserSay(profile.user_id, event.message.text)
     returnMessage = Bot.process()
     for reply in returnMessage:
-        line_bot_api.push_message(uid, reply)
+        line_bot_api.push_message(profile.user_id, reply)
 
     return 0
 
