@@ -23,7 +23,7 @@ class KChart(UserSpeak):
         d = datetime.date.today().day
 
         #imgUrl0 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-5, 1, 1), 'line',  (5, 30), '0')
-        imgUrl1 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-5, 1, 1), 'line', (5, 30), '1')
+        imgUrl1 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, 1, 1), 'line', (5, 30), '1')
         imgUrl2 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y, m-2, 1), 'candle', (5, 10), '2')
         self.result = stock + ' KChart OK imgUrl1 ' + imgUrl1 + ', imgUrl2 ' + imgUrl2
 
