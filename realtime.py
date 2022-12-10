@@ -19,14 +19,12 @@ class RealTime(UserSpeak):
 
     def get_stock_realtime(self, stock):
         url = 'https://tw.stock.yahoo.com/quote/' + stock 
-        #請求網站
         list_req = requests.get(url)
-        #將整個網站的程式碼爬下來
         soup = BeautifulSoup(list_req.text, "html.parser")
-        title = soup.find('h1', {'class' : 'C($c-link-text)'})			# 找到h1這個標籤
+        title = soup.find('h1', {'class' : 'C($c-link-text)'})
         a = soup.select('.Fz\(32px\)')[0]
         b = soup.select('.Fz\(20px\)')[0]
-        s = ''							# 漲或跌的狀態
+        s = ''
         try:
             if soup.select('#main-0-QuoteHeader-Proxy')[0].select('.C\(\$c-trend-down\)')[0]:
                 s = '-'
@@ -36,7 +34,7 @@ class RealTime(UserSpeak):
                     s = '+'
             except:
                 s = '-'
-        result = f'{title.get_text()}{a.get_text()}({s}{b.get_text()})' 
+        result = f'{title.get_text()} {a.get_text()}({s}{b.get_text()})' 
         
         return result
 
