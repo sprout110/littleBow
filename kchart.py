@@ -22,23 +22,23 @@ class KChart(UserSpeak):
         m = datetime.date.today().month
         d = datetime.date.today().day
 
-        imgUrl0 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-10, 1, 1), (60, 120))
-        imgUrl1 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-2, 1, 1), (10, 30))
-        imgUrl2 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y, m-2, 1), (5, 10))
+        imgUrl0 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-5, 1, 1), 'line',  (60, 120))
+        imgUrl1 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-2, 1, 1), 'candle', (10, 30))
+        imgUrl2 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y, m-2, 1), 'candle', (5, 10))
         self.result = stock + ' KChart OK imgUrl1 ' + imgUrl1 + ', imgUrl2 ' + imgUrl2
 
         return [ImageSendMessage(original_content_url = imgUrl0, preview_image_url = imgUrl0),
                 ImageSendMessage(original_content_url = imgUrl1, preview_image_url = imgUrl1),
                 ImageSendMessage(original_content_url = imgUrl2, preview_image_url = imgUrl2)]
 
-    def plot_stcok_k_chart(self, IMGUR_CLIENT_ID, stock, startTime, ma):
+    def plot_stcok_k_chart(self, IMGUR_CLIENT_ID, stock, startTime, myType = 'candle', myMav = (5, 10)):
         df = yf.download(stock, start = startTime) 
 
         tempImgFile = self.uid + ".png"
 
         mpf.plot(df, 
-                type = 'candle', 
-                mav = ma, 
+                type = myType, 
+                mav = myMav, 
                 volume = True, 
                 ylabel = stock.upper() + ' Price' , 
                 savefig = tempImgFile)
