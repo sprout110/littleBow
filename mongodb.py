@@ -1,4 +1,3 @@
-from pymongo import MongoClient
 import pymongo
 import certifi
 #import urllib.parse

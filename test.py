@@ -4,6 +4,7 @@ import mplfinance as mpf
 import yfinance as yf
 import pyimgur
 import datetime
+import mongodb
 
 IMGUR_CLIENT_ID = 'd82208d3c8f4f9c'
 
@@ -13,31 +14,12 @@ class MyTest(UserSpeak):
         startTime = ''
         endTime = ''
 
-    def process(self, startTime = '2020-01-01'):
-        self.startTime = startTime
-        stock = str(self.msg[1:5])+".tw"
-        imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , self.startTime)
-        self.result = stock + ' KChart OK ' + imgUrl
+    def process(self):
+        mongodb.write_user_stock_fountion(stock='2412', bs='>', price='25')
 
-        return [ImageSendMessage(original_content_url = imgUrl, preview_image_url = imgUrl)]
+        return ['2412已經儲存成功']
 
-    def plot_stcok_k_chart(self, IMGUR_CLIENT_ID, stock = "0050" , startTime = '2020-01-01'):
-        df = yf.download(stock, start = startTime) 
-
-        tempImgFile = self.uid + ".png"
-
-        mpf.plot(df, 
-                type='candle', 
-                mav=(5,20), 
-                volume = True, 
-                ylabel = stock.upper()+' Price' , 
-                savefig = tempImgFile)
-
-        im = pyimgur.Imgur(IMGUR_CLIENT_ID)
-        uploaded_image = im.upload_image(tempImgFile, title = stock + " candlestick chart")
-
-        return uploaded_image.link
-
+ 
 # y = datetime.date.today().year
 # m = datetime.date.today().month
 # d = datetime.date.today().day

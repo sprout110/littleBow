@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, abort, redirect, url_for, sen
 from mylinebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import (MessageEvent, TextMessage)
-from module import *
 import home
 import mylinebot
 
@@ -30,7 +29,7 @@ def callback():
 
 @handler.add(MessageEvent, message = TextMessage)
 def handle_message(event):
-    mylinebot.sendMessage(event)
+    mylinebot.pushMessage(event)
     return 0
 
 if __name__ == '__main__':
