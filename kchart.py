@@ -23,15 +23,15 @@ class KChart(UserSpeak):
         d = datetime.date.today().day
 
         #imgUrl0 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-5, 1, 1), 'line',  (5, 30), '0')
-        imgUrl1 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, 1, 1), 'line', (5, 30), '1')
-        imgUrl2 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y, m-2, 1), 'candle', (5, 10), '2')
+        imgUrl1 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, 1, 1), 'line', (5, 20), '1')
+        imgUrl2 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y, m-2, 1), 'candle', (5, 20), '2')
         self.result = stock + ' KChart OK imgUrl1 ' + imgUrl1 + ', imgUrl2 ' + imgUrl2
 
         #return [ImageSendMessage(original_content_url = imgUrl0, preview_image_url = imgUrl0),
         return [ImageSendMessage(original_content_url = imgUrl1, preview_image_url = imgUrl1),
-                ImageSendMessage(original_content_url = imgUrl2, preview_image_url = imgUrl2),
-                TextSendMessage('測試文字訊息一'),
-                TextSendMessage('測試文字訊息二')]
+                ImageSendMessage(original_content_url = imgUrl2, preview_image_url = imgUrl2)]
+                #TextSendMessage('測試文字訊息一'),
+                #TextSendMessage('測試文字訊息二')]
 
     def plot_stcok_k_chart(self, IMGUR_CLIENT_ID, stock, startTime, myType = 'candle', myMav = (5, 10), serial = '0'):
         df = yf.download(stock, start = startTime) 
