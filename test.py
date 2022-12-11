@@ -12,8 +12,8 @@ class MyTest(UserSpeak):
         return [TextSendMessage('2412已經儲存成功')]
 
 
-test = MyTest('testUid', 't2412')
-print(test.process())
+#test = MyTest('testUid', 't2412')
+#print(test.process())
 
  
 # y = datetime.date.today().year
