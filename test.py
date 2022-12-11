@@ -1,23 +1,19 @@
 from userspeak import UserSpeak
-from linebot.models import ImageSendMessage
-import mplfinance as mpf
-import yfinance as yf
-import pyimgur
-import datetime
+from linebot.models import TextSendMessage
 import mongodb
-
-IMGUR_CLIENT_ID = 'd82208d3c8f4f9c'
 
 class MyTest(UserSpeak):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
-        startTime = ''
-        endTime = ''
 
     def process(self):
         mongodb.write_user_stock_fountion(stock='2412', bs='>', price='25')
 
-        return ['2412已經儲存成功']
+        return [TextSendMessage('2412已經儲存成功')]
+
+
+test = MyTest('testUid', 't2412')
+print(test.process())
 
  
 # y = datetime.date.today().year
