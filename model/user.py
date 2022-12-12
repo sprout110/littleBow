@@ -1,9 +1,11 @@
-from botbrain import BotBrain
-from echo import Echo
-from stock import Stock
-from kchart import KChart
-from test import MyTest
 import re
+
+from model.brain import Brain
+from modules.echo import Echo
+from modules.stock import Stock
+from modules.test import MyTest
+from modules.howto import HowTo
+from kchart import KChart
 
 def UserSay(uid, msg):
     if re.match('s[0-9]{4}', msg.lower()):
@@ -12,10 +14,15 @@ def UserSay(uid, msg):
         return KChart(uid, msg)
     elif re.match('t[0-9]{4}', msg.lower()):
         return MyTest(uid, msg)
-    elif 'i love you' == msg.lower():
-        return BotBrain(uid, msg)
+    elif 'i love you' == msg.strip().lower().strip():
+        return Brain(uid, msg)
+    elif '@說明'  == msg:
+        return HowTo(uid, msg)
     else:
         return Echo(uid, msg)
+
+
+
 
 
 '''

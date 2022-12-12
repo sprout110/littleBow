@@ -1,4 +1,4 @@
-import user
+import model.user as user
 
 def home():
     result = ''

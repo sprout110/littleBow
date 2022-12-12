@@ -1,9 +1,9 @@
-from botbrain import BotBrain
+from model.brain import Brain
 from linebot.models import TextSendMessage
 import requests
 from bs4 import BeautifulSoup
 
-class Stock(BotBrain):
+class Stock(Brain):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
 

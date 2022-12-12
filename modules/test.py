@@ -1,8 +1,8 @@
-from botbrain import BotBrain
+from model.brain import Brain
 from linebot.models import TextSendMessage
-import mongodb
+import model.mongodb as mongodb
 
-class MyTest(BotBrain):
+class MyTest(Brain):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
 

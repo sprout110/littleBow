@@ -1,11 +1,11 @@
 from linebot import (LineBotApi)
 from linebot.models import *
-import user
-import settings
+import model.user as user
+import config.settings as settings
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 
-def pushMessage(event):
+def replyMessage(event):
     profile = line_bot_api.get_profile(event.source.user_id)
 
     try:
@@ -13,4 +13,4 @@ def pushMessage(event):
         line_bot_api.push_message(profile.user_id, Brain.thinking())
     except:
         line_bot_api.push_message(profile.user_id, 
-            TextSendMessage(text='機器忙碌中，請稍候再試 Q_Q'))
+            TextSendMessage(text='系統忙碌中，請稍候再試 Q_Q'))

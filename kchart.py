@@ -5,30 +5,39 @@ import mplfinance as mpf
 import yfinance as yf
 import pyimgur
 import datetime
-from botbrain import BotBrain
+from model.brain import Brain
+from config import settings
 
-IMGUR_CLIENT_ID = 'd82208d3c8f4f9c'
+IMGUR_CLIENT_ID = settings.IMGUR_CLIENT_ID
 
-class KChart(BotBrain):
+class KChart(Brain):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
 
     def thinking(self):
-        stock = str(self.msg[1:5])+".tw"
-        y = datetime.date.today().year
-        m = datetime.date.today().month
-        d = datetime.date.today().day
+        list = self.msg.split()
+        # print(list)
+        if len(list) > 1:
+            stock = str(list[0][1:5])+".tw"
+            # print(stock)
+            endTime = datetime.datetime.strptime(list[1], "%Y-%m-%d")
+            # print(endTime)
+            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , endTime, 'line', (5, 15, 60), '1')
+        else:
+            stock = str(self.msg[1:5])+".tw"
+            # print(stock)
+            y = datetime.date.today().year
+            m = datetime.date.today().month
+            d = datetime.date.today().day
+            # print(datetime.date(y, m-3, 1))
+            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y, m-3, 1), 'candle', (5, 8, 20), '2')
+        
+        self.result = stock + ' KChart OK imgUrl ' + imgUrl
 
-        #imgUrl1 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, 1, 1), 'line', (5, 20), '1')
-        imgUrl2 = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y, m-3, 1), 'candle', (5, 20), '2')
-        #self.result = stock + ' KChart OK imgUrl1 ' + imgUrl1 + ', imgUrl2 ' + imgUrl2
-        self.result = 'success'
-
-        #return [ImageSendMessage(original_content_url = imgUrl1, preview_image_url = imgUrl1), ImageSendMessage(original_content_url = imgUrl2, preview_image_url = imgUrl2)]
-        return [TextSendMessage('早盤交易08:30 - 13:30'),
-                TextSendMessage('盤後交易14:00 - 14:30'),
-                TextSendMessage('零股交易13:40 - 14:30'),
-                ImageSendMessage(original_content_url = imgUrl2, preview_image_url = imgUrl2)]
+        return [TextSendMessage('早盤交易時間 08:30 - 13:30'),
+                TextSendMessage('盤後交易時間 14:00 - 14:30'),
+                TextSendMessage('零股交易時間 13:40 - 14:30'),
+                ImageSendMessage(original_content_url = imgUrl, preview_image_url = imgUrl)]
 
     def plot_stcok_k_chart(self, 
                             IMGUR_CLIENT_ID, 
@@ -38,7 +47,8 @@ class KChart(BotBrain):
                             myMav = (5, 20), 
                             serial = '0'):
 
-        df = yf.download(stock, start = startTime) 
+        df = yf.download(stock, start = startTime)
+        # print(df) 
         tempFile = self.uid + serial + '.png'
         mpf.plot(df, 
                 type = myType, 

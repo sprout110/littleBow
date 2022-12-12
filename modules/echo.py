@@ -1,7 +1,7 @@
-from botbrain import BotBrain
+from model.brain import Brain
 from linebot.models import TextSendMessage
 
-class Echo(BotBrain):
+class Echo(Brain):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
     def thinking(self):
