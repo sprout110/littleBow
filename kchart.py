@@ -5,7 +5,6 @@ import mplfinance as mpf
 import yfinance as yf
 import pyimgur
 import datetime
-
 from botbrain import BotBrain
 
 IMGUR_CLIENT_ID = 'd82208d3c8f4f9c'
@@ -13,11 +12,8 @@ IMGUR_CLIENT_ID = 'd82208d3c8f4f9c'
 class KChart(BotBrain):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
-        startTime = ''
-        endTime = ''
 
-    def thinking(self, startTime = '2020-01-01'):
-        self.startTime = startTime
+    def thinking(self):
         stock = str(self.msg[1:5])+".tw"
         y = datetime.date.today().year
         m = datetime.date.today().month
@@ -31,7 +27,14 @@ class KChart(BotBrain):
         #return [ImageSendMessage(original_content_url = imgUrl1, preview_image_url = imgUrl1), ImageSendMessage(original_content_url = imgUrl2, preview_image_url = imgUrl2)]
         return [ImageSendMessage(original_content_url = imgUrl2, preview_image_url = imgUrl2)]
 
-    def plot_stcok_k_chart(self, IMGUR_CLIENT_ID, stock, startTime, myType = 'candle', myMav = (5, 20), serial = '0'):
+    def plot_stcok_k_chart(self, 
+                            IMGUR_CLIENT_ID, 
+                            stock, 
+                            startTime, 
+                            myType = 'candle', 
+                            myMav = (5, 20), 
+                            serial = '0'):
+
         df = yf.download(stock, start = startTime) 
         tempFile = self.uid + serial + '.png'
         mpf.plot(df, 

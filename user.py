@@ -1,3 +1,4 @@
+from botbrain import BotBrain
 from echo import Echo
 from stock import Stock
 from kchart import KChart
@@ -11,6 +12,8 @@ def UserSay(uid, msg):
         return KChart(uid, msg)
     elif re.match('t[0-9]{4}', msg.lower()):
         return MyTest(uid, msg)
+    elif 'i love you' == msg.lower():
+        return BotBrain(uid, msg)
     else:
         return Echo(uid, msg)
 
