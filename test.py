@@ -1,8 +1,8 @@
-from userspeak import UserSpeak
+from botbrain import BotBrain
 from linebot.models import TextSendMessage
 import mongodb
 
-class MyTest(UserSpeak):
+class MyTest(BotBrain):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
 
@@ -12,8 +12,8 @@ class MyTest(UserSpeak):
         return [TextSendMessage('2412已經儲存成功')]
 
 
-test = MyTest('testUid', 't2412')
-print(test.process())
+#test = MyTest('testUid', 't2412')
+#print(test.process())
 
  
 # y = datetime.date.today().year

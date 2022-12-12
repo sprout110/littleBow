@@ -10,6 +10,7 @@ def pushMessage(event):
 
     try:
         Brain = user.UserSay(profile.user_id, event.message.text)
-        line_bot_api.push_message(profile.user_id, Brain.process())
+        line_bot_api.push_message(profile.user_id, Brain.thinking())
     except:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='資訊處理失敗，請稍候再試 Q_Q'))
+        line_bot_api.push_message(profile.user_id, 
+            TextSendMessage(text='機器忙碌中，請稍候再試 Q_Q'))

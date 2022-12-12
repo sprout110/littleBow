@@ -1,4 +1,4 @@
-class UserSpeak:
+class BotBrain:
     uid = ''
     msg = ''
     result = ''
@@ -7,7 +7,7 @@ class UserSpeak:
         self.uid = uid
         self.msg = msg
 
-    def process(self):
+    def thinking(self):
         self.result = self.uid + 'say:' + self.msg
         return self.result
 

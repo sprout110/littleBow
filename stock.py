@@ -1,13 +1,13 @@
-from userspeak import UserSpeak
+from botbrain import BotBrain
 from linebot.models import TextSendMessage
 import requests
 from bs4 import BeautifulSoup
 
-class RealTime(UserSpeak):
+class Stock(BotBrain):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
 
-    def process(self):
+    def thinking(self):
         stock = str(self.msg[1:5])
         try:
             reply = self.get_stock_realtime(stock)
