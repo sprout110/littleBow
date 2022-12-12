@@ -1,4 +1,4 @@
-from linebot.models import ImageSendMessage
+from linebot.models import (ImageSendMessage, TextSendMessage)
 import matplotlib
 matplotlib.use('Agg')
 import mplfinance as mpf
@@ -25,7 +25,10 @@ class KChart(BotBrain):
         self.result = 'success'
 
         #return [ImageSendMessage(original_content_url = imgUrl1, preview_image_url = imgUrl1), ImageSendMessage(original_content_url = imgUrl2, preview_image_url = imgUrl2)]
-        return [ImageSendMessage(original_content_url = imgUrl2, preview_image_url = imgUrl2)]
+        return [TextSendMessage('早盤交易08:30 - 13:30'),
+                TextSendMessage('盤後交易14:00 - 14:30'),
+                TextSendMessage('零股交易13:40 - 14:30'),
+                ImageSendMessage(original_content_url = imgUrl2, preview_image_url = imgUrl2)]
 
     def plot_stcok_k_chart(self, 
                             IMGUR_CLIENT_ID, 
