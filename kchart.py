@@ -22,7 +22,7 @@ class KChart(Brain):
             # print(stock)
             endTime = datetime.datetime.strptime(list[1], "%Y-%m-%d")
             # print(endTime)
-            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , endTime, 'line', (5, 15, 60), '1')
+            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , endTime, 'line', (5, 20, 60), '1')
         else:
             stock = str(self.msg[1:5])+".tw"
             # print(stock)
@@ -30,7 +30,7 @@ class KChart(Brain):
             m = datetime.date.today().month
             d = datetime.date.today().day
             # print(datetime.date(y, m-3, 1))
-            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y, m-3, 1), 'candle', (5, 8, 20), '2')
+            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y, m-3, 1), 'candle', (2, 5, 20), '2')
         
         self.result = stock + ' KChart OK imgUrl ' + imgUrl
 
