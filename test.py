@@ -7,13 +7,13 @@ class MyTest(UserSpeak):
         super().__init__(uid, msg)
 
     def process(self):
-        mongodb.write_user_stock_fountion(stock='2412', bs='>', price='25')
+        mongodb.write_user_stock_fountion(uid = 'uid', stock='2412', bs='>', price='25')
 
         return [TextSendMessage('2412已經儲存成功')]
 
 
-#test = MyTest('testUid', 't2412')
-#print(test.process())
+test = MyTest('testUid', 't2412')
+print(test.process())
 
  
 # y = datetime.date.today().year

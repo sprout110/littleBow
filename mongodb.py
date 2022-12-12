@@ -11,25 +11,27 @@ def constructor():
     db = client[Authdb]
     return db
 
-def write_user_stock_fountion(stock, bs, price):  
+def write_user_stock_fountion(uid, stock, bs, price):  
     db=constructor()
     collect = db['mystock']
-    collect.insert_one({"stock": stock,
+    collect.insert_one({
+                    "uid": uid,
+                    "stock": stock,
                     "data": 'care_stock',
                     "bs": bs,
                     "price": float(price),
                     "date_info": datetime.datetime.utcnow()
                     })
 
-def delete_user_stock_fountion(stock):  
+def delete_user_stock_fountion(uid, stock):  
     db=constructor()
     collect = db['mystock']
-    collect.delete_many({"stock": stock})
+    collect.delete_many({"uid": uid, "stock": stock})
     #coll.delete_one({'username':'ketio'})
 
-def show_user_stock_fountion():  
+def show_user_stock_fountion(uid):  
     db=constructor()
     collect = db['mystock']
-    cel=list(collect.find({"data": 'care_stock'}))
+    cel=list(collect.find({"uid": uid}))
     
     return cel

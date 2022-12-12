@@ -1,12 +1,12 @@
-from module import *
+import user
 
 def home():
     result = ''
     for msg in ['I love you!', 'S1234', 'test', 'test3', 'test4', 'test5', 'test6', 'test7']:
-        Bot = UserSay('testUid', msg)
-        returnMessage = Bot.process()
-        result += '<p>======== ' + Bot.result + ' ===========</p>'
-        for item in returnMessage:
+        Brain = user.UserSay('testUid', msg)
+        returnMessages = Brain.process()
+        result += '<p>======== ' + Brain.result + ' ===========</p>'
+        for item in returnMessages:
             result += str(item) + '<br />'
     
     return result

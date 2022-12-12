@@ -1,11 +1,12 @@
-from userspeak import UserSpeak
-from linebot.models import ImageSendMessage, TextSendMessage
+from linebot.models import ImageSendMessage
 import matplotlib
 matplotlib.use('Agg')
 import mplfinance as mpf
 import yfinance as yf
 import pyimgur
 import datetime
+
+from userspeak import UserSpeak
 
 IMGUR_CLIENT_ID = 'd82208d3c8f4f9c'
 
