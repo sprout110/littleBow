@@ -9,7 +9,7 @@ import config.settings as settings
 app = Flask(__name__)
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(settings.LINE_CHANNEL_SECRET)
-line_bot_api.push_message(settings.LINE_USER_ID, TextSendMessage(text='你可以開始了'))
+#line_bot_api.push_message(settings.LINE_USER_ID, TextSendMessage(text='你可以開始了'))
 
 @app.route('/')
 def index():
