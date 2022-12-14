@@ -12,7 +12,7 @@ class Stock(Brain):
         try:
             reply = self.get_stock_realtime(stock)
             self.result = stock + '.tw RealTime OK'
-            return [TextSendMessage(reply), TextSendMessage('輸入k' + stock + '看K線圖')]
+            return [TextSendMessage(reply)] #, TextSendMessage('輸入k' + stock + '看K線圖')]
         except:
             self.result = '抓取股票：' + stock + '.TW 失敗，沒有股票代號或網站故障。'
             return [TextSendMessage(self.result)]

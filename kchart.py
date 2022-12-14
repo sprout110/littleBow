@@ -17,21 +17,19 @@ class KChart(Brain):
     def thinking(self):
         list = self.msg.split()
         # print(list)
-        if len(list) > 1:
-            stock = str(list[0][1:5])+".tw"
-            # print(stock)
-            endTime = datetime.datetime.strptime(list[1], "%Y-%m-%d")
-            # print(endTime)
-            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , endTime, 'line', (5, 20, 60), '1')
-        else:
+        if len(list) == 1: #預設圖為線型，5日，20日均線圖。
             stock = str(self.msg[1:5])+".tw"
             # print(stock)
             y = datetime.date.today().year
             m = datetime.date.today().month
             d = datetime.date.today().day
-            # print(datetime.date(y, m-3, 1))
-            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y, m-3, 1), 'candle', (2, 5, 20), '2')
-        
+            # print(datetime.date(y-3, m, d))
+            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, m, 1), 'line', (5, 20), '2')
+        else: # ToDo: 若開始和結束時間小於3個月，candle圖，其它為均線圖。
+            stock = str(list[0][1:5])+".tw"
+            endTime = datetime.datetime.strptime(list[1], '%Y-%m-%d')
+            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , endTime, 'line', (5, 20), '1')
+
         self.result = stock + ' KChart OK imgUrl ' + imgUrl
 
         return [TextSendMessage('早盤交易時間 08:30 - 13:30'),
