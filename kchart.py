@@ -5,21 +5,30 @@ import mplfinance as mpf
 import yfinance as yf
 import pyimgur
 import datetime
-from model.brain import Brain
+from model.brain import BaseBrain
 from config import settings
+import model.mongodb as mongodb
 
 IMGUR_CLIENT_ID = settings.IMGUR_CLIENT_ID
 
-class KChart(Brain):
+class KChart(BaseBrain):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
 
     def thinking(self):
         list = self.msg.split()
-        # print(list)
+        print(list)
         if len(list) == 1: #預設圖為線型，5日，20日均線圖。
-            stock = str(self.msg[1:5])+".tw"
-            # print(stock)
+            if self.msg == '＠k線圖':
+                list = mongodb.read_user_setting(self.uid)
+                if len(list) == 0:
+                    mongodb.write_user_setting(self.uid, '2412')
+                    list = [{'uid':self.uid, 'stock':'2412'}]
+                stock = list[0]['stock']+".tw"
+            else:
+                stock = str(self.msg[1:5])+".tw"
+            # stock = str(self.msg[1:5])+".tw"
+            print(stock)
             y = datetime.date.today().year
             m = datetime.date.today().month
             d = datetime.date.today().day

@@ -1,4 +1,4 @@
-import model.user as user
+import model.usersay as usersay
 
-Brain = user.UserSay("test", "k2412")
+Brain = usersay.UserSay("test", "k2412")
 print(Brain.thinking())

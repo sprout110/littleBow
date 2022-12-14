@@ -1,15 +1,26 @@
-from model.brain import Brain
+from model.brain import BaseBrain
 from linebot.models import TextSendMessage
 import requests
 from bs4 import BeautifulSoup
+import model.mongodb as mongodb
 
-class Stock(Brain):
+class Stock(BaseBrain):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
 
     def thinking(self):
-        stock = str(self.msg[1:5])
+        #stock = str(self.msg[1:5])
+        
         try:
+            if self.msg == '@目前股價':
+                list = mongodb.read_user_setting(self.uid)
+                if len(list) == 0:
+                    mongodb.write_user_setting(self.uid, '2412')
+                    list = [{'uid':self.uid, 'stock':'2412'}]
+                stock = list[0]['stock']
+            else:
+                stock = str(self.msg[1:5])
+
             reply = self.get_stock_realtime(stock)
             self.result = stock + '.tw RealTime OK'
             return [TextSendMessage(reply)] #, TextSendMessage('輸入k' + stock + '看K線圖')]

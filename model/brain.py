@@ -1,5 +1,5 @@
 from linebot.models import TextSendMessage
-class Brain:
+class BaseBrain:
 
     def __init__(self, uid, msg):
         self.uid = uid

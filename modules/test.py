@@ -1,19 +1,19 @@
-from model.brain import Brain
+from model.brain import BaseBrain
 from linebot.models import TextSendMessage
 import model.mongodb as mongodb
 
-class MyTest(Brain):
+class MyTest(BaseBrain):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
 
-    def process(self):
+    def thinking(self):
         mongodb.write_user_stock_fountion(uid = 'uid', stock='2412', bs='>', price='25')
 
         return [TextSendMessage('2412已經儲存成功')]
 
 
 #test = MyTest('testUid', 't2412')
-#print(test.process())
+#print(test.think())
 
  
 # y = datetime.date.today().year
