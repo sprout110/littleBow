@@ -1,13 +1,13 @@
 from model.brain import BaseBrain
 from linebot.models import TextSendMessage
-import model.mongodb as mongodb
+import model.mydb as mydb
 
 class MyTest(BaseBrain):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
 
     def thinking(self):
-        mongodb.write_user_stock_fountion(uid = 'uid', stock='2412', bs='>', price='25')
+        mydb.write_user_stock_fountion(uid = 'uid', stock='2412', bs='>', price='25')
 
         return [TextSendMessage('2412已經儲存成功')]
 

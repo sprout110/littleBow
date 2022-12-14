@@ -7,7 +7,7 @@ import pyimgur
 import datetime
 from model.brain import BaseBrain
 from config import settings
-import model.mongodb as mongodb
+import model.mydb as mydb
 
 IMGUR_CLIENT_ID = settings.IMGUR_CLIENT_ID
 
@@ -20,9 +20,9 @@ class KChart(BaseBrain):
         print(list)
         if len(list) == 1: #預設圖為線型，5日，20日均線圖。
             if self.msg == '＠k線圖':
-                list = mongodb.read_user_setting(self.uid)
+                list = mydb.read_user_setting(self.uid)
                 if len(list) == 0:
-                    mongodb.write_user_setting(self.uid, '2412')
+                    mydb.write_user_setting(self.uid, '2412')
                     list = [{'uid':self.uid, 'stock':'2412'}]
                 stock = list[0]['stock']+".tw"
             else:
