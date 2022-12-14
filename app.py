@@ -2,9 +2,9 @@ from flask import Flask, render_template, request, abort, redirect, url_for, sen
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage)
-import pages.home as home 
+from pages.home import Home 
 import model.linebotsay as linebotsay
-import config.settings as settings
+import conf.settings as settings
 
 app = Flask(__name__)
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
@@ -13,7 +13,7 @@ handler = WebhookHandler(settings.LINE_CHANNEL_SECRET)
 
 @app.route('/')
 def index():
-    return home.home()
+    return Home()
 
 @app.route('/callback', methods=['POST'])
 def callback():

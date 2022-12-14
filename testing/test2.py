@@ -1,4 +1,4 @@
-import model.usersay as usersay
+from model.usersay import UserSay
 
-Brain = usersay.UserSay("test", "k2412")
-print(Brain.thinking())
+Bot = UserSay("uid", "k2412")
+print(Bot.dosomething())

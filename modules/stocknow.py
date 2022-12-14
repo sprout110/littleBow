@@ -1,14 +1,14 @@
-from model.brain import BaseBrain
+from model.basebot import Basebot
 from linebot.models import TextSendMessage
 import requests
 from bs4 import BeautifulSoup
 import model.mydb as mydb
 
-class Stock(BaseBrain):
+class StockNow(Basebot):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
 
-    def thinking(self):
+    def dosomething(self):
         #stock = str(self.msg[1:5])
         
         try:

@@ -1,17 +1,17 @@
-from model.brain import BaseBrain
+from model.basebot import Basebot
 from linebot.models import TextSendMessage
 import model.mydb as mydb
 
-class UserSettings(BaseBrain):
+class ShowSettings(Basebot):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
 
-    def thinking(self):
-        list = mydb.read_user_setting(self.uid)
-        if len(list) == 0:
+    def dosomething(self):
+        dataList = mydb.read_user_setting(self.uid)
+        if len(dataList) == 0:
             mydb.write_user_setting(self.uid, '2412')
-            list = [{'uid':self.uid, 'stock':'2412'}]
-        text = '目前選擇的股票為：' + list[0]['stock'] #+ '\n'
+            dataList = [{'uid':self.uid, 'stock':'2412'}]
+        text = '目前選股為：' + dataList[0]['stock'] #+ '\n'
         #text += '其它：'
 
         return [TextSendMessage(text)]

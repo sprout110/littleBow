@@ -1,11 +1,11 @@
-from model.brain import BaseBrain
+from model.basebot import Basebot
 from linebot.models import (TextSendMessage, QuickReply, QuickReplyButton, PostbackAction, MessageAction)
 
-class ChoiceStock(BaseBrain):
+class ChoiceStock(Basebot):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
 
-    def thinking(self):
+    def dosomething(self):
         try:
             reply = TextSendMessage(
                 text = '請選擇股票：',

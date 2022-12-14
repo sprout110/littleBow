@@ -64,7 +64,9 @@ def read_user_setting(uid):
     try:
         cel = [{"uid": uid, "stock":cache[uid]}]
     except:
-        print('hi')
         cel = [{"uid": uid, "stock": '2412'}]
     
     return cel
+
+#========================= 股票名稱對應 ===========================
+# 這個部份, 應該從即時資料來, 那表示要寫檔

@@ -5,45 +5,47 @@ import mplfinance as mpf
 import yfinance as yf
 import pyimgur
 import datetime
-from model.brain import BaseBrain
-from config import settings
+from model.basebot import Basebot
+from conf import settings
 import model.mydb as mydb
 
 IMGUR_CLIENT_ID = settings.IMGUR_CLIENT_ID
 
-class KChart(BaseBrain):
+class KChart(Basebot):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
 
-    def thinking(self):
-        list = self.msg.split()
-        print(list)
-        if len(list) == 1: #預設圖為線型，5日，20日均線圖。
+    def dosomething(self):
+        msglist = self.msg.split()
+        if len(msglist) == 1: #預設圖為線型，5日，20日均線圖。
             if self.msg == '＠k線圖':
-                list = mydb.read_user_setting(self.uid)
-                if len(list) == 0:
+                settinglist = mydb.read_user_setting(self.uid)
+                if len(settinglist) == 0:
                     mydb.write_user_setting(self.uid, '2412')
-                    list = [{'uid':self.uid, 'stock':'2412'}]
-                stock = list[0]['stock']+".tw"
+                    settinglist = [{'uid':self.uid, 'stock':'2412'}]
+                stock = settinglist[0]['stock']+".tw"
             else:
                 stock = str(self.msg[1:5])+".tw"
-            # stock = str(self.msg[1:5])+".tw"
-            print(stock)
+            
             y = datetime.date.today().year
             m = datetime.date.today().month
             d = datetime.date.today().day
             # print(datetime.date(y-3, m, d))
             imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, m, 1), 'line', (5, 20), '2')
         else: # ToDo: 若開始和結束時間小於3個月，candle圖，其它為均線圖。
-            stock = str(list[0][1:5])+".tw"
-            endTime = datetime.datetime.strptime(list[1], '%Y-%m-%d')
-            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , endTime, 'line', (5, 20), '1')
+            stock = str(msglist[0][1:5])+".tw"
+            startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
+            if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 7777000:
+                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'candle', (5, 20), '1')
+            else:    
+                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'line', (5, 20), '1')
 
         self.result = stock + ' KChart OK imgUrl ' + imgUrl
 
-        return [TextSendMessage('早盤交易時間 08:30 - 13:30'),
+        return [TextSendMessage('早盤交易時間 09:00 - 13:30'),
                 TextSendMessage('盤後交易時間 14:00 - 14:30'),
-                TextSendMessage('零股交易時間 13:40 - 14:30'),
+                TextSendMessage('盤中零股時間 09:00 - 13:30'),
+                TextSendMessage('盤後零股時間 13:40 - 14:30'),
                 ImageSendMessage(original_content_url = imgUrl, preview_image_url = imgUrl)]
 
     def plot_stcok_k_chart(self, 
@@ -55,7 +57,6 @@ class KChart(BaseBrain):
                             serial = '0'):
 
         df = yf.download(stock, start = startTime)
-        # print(df) 
         tempFile = self.uid + serial + '.png'
         mpf.plot(df, 
                 type = myType, 

@@ -1,12 +1,12 @@
-from model.brain import BaseBrain
+from model.basebot import Basebot
 from linebot.models import TextSendMessage
 import model.mydb as mydb
 
-class UserWriteSettings(BaseBrain):
+class WriteSettings(Basebot):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
 
-    def thinking(self):
+    def dosomething(self):
         try:
             list = mydb.read_user_setting(self.uid)
             print(list)
