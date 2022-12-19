@@ -35,7 +35,7 @@ class KChart(Basebot):
         else: # ToDo: 若開始和結束時間小於3個月，candle圖，其它為均線圖。
             stock = str(msglist[0][1:5])+".tw"
             startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
-            if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 7777000:
+            if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 11000000:
                 imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'candle', (5, 20), '1')
             else:    
                 imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'line', (5, 20), '1')
@@ -57,15 +57,103 @@ class KChart(Basebot):
                             serial = '0'):
 
         df = yf.download(stock, start = startTime)
+
+        #MACD
+        exp5 = df['Close'].ewm(span=5, adjust=False).mean()
+        exp20 = df['Close'].ewm(span=20, adjust=False).mean()
+        exp12 = df['Close'].ewm(span=12, adjust=False).mean()
+        exp26 = df['Close'].ewm(span=26, adjust=False).mean()
+        macd = exp12 - exp26
+        signal = macd.ewm(span=9, adjust=False).mean()
+        histogram = macd - signal
+
+        
+        
+        if stock == '2412.tw' and myType == 'candle':
+            apds = [mpf.make_addplot(exp5, panel =0,color='red'),
+                mpf.make_addplot(exp20, panel=0,color='orange'),
+                mpf.make_addplot(exp12, panel=0,color='c',linestyle='dashdot'),
+                mpf.make_addplot(exp26, panel=0,color='lime',linestyle='dashdot'),
+                mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False),
+                mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD'),
+                mpf.make_addplot(signal, panel = 1, color = 'orange')]
+            kwargs = dict(
+                type = myType,
+                volume = True,
+                title = '\n\n' + stock.upper(),
+                ylabel = stock.upper() + ' MAV(5, 12, 20, 26)',
+                ylabel_lower = 'Volume',
+                #figratio=(1200/72,480/60),
+                #figscale=3,
+                datetime_format='%m/%d',
+                xrotation = 0,
+                ylim = (104,120)
+            )
+        elif myType == 'candle':
+            apds = [mpf.make_addplot(exp5, panel =0,color='red'),
+                mpf.make_addplot(exp20, panel=0,color='orange'),
+                mpf.make_addplot(exp12, panel=0,color='c',linestyle='dashdot'),
+                mpf.make_addplot(exp26, panel=0,color='lime',linestyle='dashdot'),
+                mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False),
+                mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD'),
+                mpf.make_addplot(signal, panel = 1, color = 'orange')]
+            kwargs = dict(
+                type = myType,
+                volume = True,
+                title = '\n\n' + stock.upper(),
+                ylabel = stock.upper() + ' MAV(5, 12, 20, 26)',
+                ylabel_lower = 'Volume',
+                #figratio=(1200/72,480/60),
+                #figscale=3,
+                datetime_format='%m/%d',
+                xrotation = 0
+            )
+        else:
+            apds = [mpf.make_addplot(exp5, panel =0,color='red'),
+                mpf.make_addplot(exp20, panel=0,color='orange'),
+                mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False),
+                mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD'),
+                mpf.make_addplot(signal, panel = 1, color = 'orange')]
+            kwargs = dict(
+                type = myType,
+                volume = True,
+                title = '\n\n' + stock.upper(),
+                ylabel = stock.upper() + ' MAV(5, 12, 20, 26)',
+                ylabel_lower = 'Volume',
+                datetime_format='%Y-%m-%d'
+            )
+
+
         tempFile = self.uid + serial + '.png'
         mpf.plot(df, 
-                type = myType, 
-                mav = myMav, 
-                volume = True, 
-                ylabel = stock.upper() + ' ' + str(myMav) , 
+                **kwargs,
+                addplot = apds,
+                num_panels = 3,
+                main_panel = 0,
+                volume_panel = 2,
+                style = my_style,
                 savefig = tempFile)
 
         im = pyimgur.Imgur(IMGUR_CLIENT_ID)
         uploaded_image = im.upload_image(tempFile, title = stock + " candlestick chart")
 
         return uploaded_image.link
+
+
+my_color = mpf.make_marketcolors(
+    up = 'red',
+    down = 'limegreen',
+    edge = 'inherit',
+    wick = 'inherit',
+    volume = 'inherit',
+)
+
+my_style = mpf.make_mpf_style(
+    marketcolors = my_color,
+    figcolor='#EEEEEE',
+    y_on_right = True,
+    gridaxis='both',
+    gridstyle='-.',
+    gridcolor='#E1E1E1',
+    #rc={'font.family':'Microsoft JhengHei'}
+)

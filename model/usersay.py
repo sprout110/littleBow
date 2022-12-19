@@ -6,6 +6,7 @@ from modules.howto import HowTo
 from modules.showsettings import ShowSettings
 from modules.writesettings import WriteSettings
 from modules.choicestock import ChoiceStock
+from modules.choicekchart import ChoiceKChart
 from kchart import KChart
 
 def UserSay(uid, msg):
@@ -23,7 +24,7 @@ def UserSay(uid, msg):
     elif '@目前股價' == msg:
         return StockNow(uid, msg)
     elif '＠k線圖' == msg:
-        return KChart(uid, msg)
+        return ChoiceKChart(uid, msg)
     elif re.match('^[0-9]{4}$', msg):
         return WriteSettings(uid, msg)
     else:

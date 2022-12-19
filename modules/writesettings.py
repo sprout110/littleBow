@@ -18,6 +18,6 @@ class WriteSettings(Basebot):
             elif len(list) == 0:
                 mydb.write_user_setting(self.uid, self.msg)
 
-            return [TextSendMessage('設定成功')]
+            return [TextSendMessage('目前選擇的股票為：' + self.msg)]
         except:
             return [TextSendMessage('設定失敗')]
