@@ -61,7 +61,8 @@ class KChart(Basebot):
         #MACD
         exp5 = df['Close'].ewm(span=5, adjust=False).mean()
         exp20 = df['Close'].ewm(span=20, adjust=False).mean()
-
+        exp240 = df['Close'].ewm(span=240, adjust=False).mean()
+        #print(exp240.head(10))
         exp12 = df['Close'].ewm(span=12, adjust=False).mean()
         exp26 = df['Close'].ewm(span=26, adjust=False).mean()
         macd = exp12 - exp26
@@ -77,18 +78,19 @@ class KChart(Basebot):
         
         if stock == '2412.tw' and myType == 'candle':
             apds = [mpf.make_addplot(exp5, panel =0,color='red',linestyle='dashdot'),
-                mpf.make_addplot(exp20, panel=0,color='orange',linestyle='dashdot'),
+                mpf.make_addplot(exp20, panel=0, color='orange',linestyle='dashdot'),
+                mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot'),
                 mpf.make_addplot(exp12, panel=0,color='c',linestyle='dashdot'),
                 mpf.make_addplot(exp26, panel=0,color='lime',linestyle='dashdot'),
                 mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False),
                 mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD', secondary_y = True),
-                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True)
+                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True,linestyle='dashdot')
                 ]
             kwargs = dict(
                 type = myType,
                 volume = True,
                 title = '\n\n' + stock.upper(),
-                ylabel = stock.upper() + ' MAV(5, 12, 20, 26)',
+                ylabel = stock.upper() + ' mav(5, 12, 20, 26, 240)',
                 ylabel_lower = 'Volume',
                 #figratio=(1200/72,480/60),
                 #figscale=3,
@@ -97,18 +99,19 @@ class KChart(Basebot):
                 ylim = (104,120)
             )
         elif myType == 'candle':
-            apds = [mpf.make_addplot(exp5, panel =0,color='red'),
-                mpf.make_addplot(exp20, panel=0,color='orange'),
+            apds = [mpf.make_addplot(exp5, panel =0,color='red',linestyle='dashdot'),
+                mpf.make_addplot(exp20, panel=0,color='orange',linestyle='dashdot'),
+                mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot'),
                 mpf.make_addplot(exp12, panel=0,color='c',linestyle='dashdot'),
                 mpf.make_addplot(exp26, panel=0,color='lime',linestyle='dashdot'),
                 mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False),
                 mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD', secondary_y = True),
-                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True)]
+                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True,linestyle='dashdot')]
             kwargs = dict(
                 type = myType,
                 volume = True,
                 title = '\n\n' + stock.upper(),
-                ylabel = stock.upper() + ' MAV(5, 12, 20, 26)',
+                ylabel = stock.upper() + ' mav(5, 12, 20, 26, 240)',
                 ylabel_lower = 'Volume',
                 #figratio=(1200/72,480/60),
                 #figscale=3,
@@ -116,16 +119,17 @@ class KChart(Basebot):
                 xrotation = 0
             )
         else:
-            apds = [mpf.make_addplot(exp5, panel =0,color='red'),
-                mpf.make_addplot(exp20, panel=0,color='orange'),
+            apds = [mpf.make_addplot(exp5, panel =0,color='red',linestyle='dashdot'),
+                mpf.make_addplot(exp20, panel=0,color='orange',linestyle='dashdot'),
+                mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot'),
                 mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False),
                 mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD', secondary_y = True),
-                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True)]
+                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True,linestyle='dashdot')]
             kwargs = dict(
                 type = myType,
                 volume = True,
                 title = '\n\n' + stock.upper(),
-                ylabel = stock.upper() + ' MAV(5, 12, 20, 26)',
+                ylabel = stock.upper() + ' mav(5, 12, 20, 26, 240)',
                 ylabel_lower = 'Volume',
                 datetime_format='%Y-%m-%d'
             )
