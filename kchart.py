@@ -70,13 +70,14 @@ class KChart(Basebot):
         
         
         if stock == '2412.tw' and myType == 'candle':
-            apds = [mpf.make_addplot(exp5, panel =0,color='red'),
-                mpf.make_addplot(exp20, panel=0,color='orange'),
+            apds = [mpf.make_addplot(exp5, panel =0,color='red',linestyle='dashdot'),
+                mpf.make_addplot(exp20, panel=0,color='orange',linestyle='dashdot'),
                 mpf.make_addplot(exp12, panel=0,color='c',linestyle='dashdot'),
                 mpf.make_addplot(exp26, panel=0,color='lime',linestyle='dashdot'),
-                mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False),
                 mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD'),
-                mpf.make_addplot(signal, panel = 1, color = 'orange')]
+                mpf.make_addplot(signal, panel = 1, color = 'orange'),
+                mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False)
+                ]
             kwargs = dict(
                 type = myType,
                 volume = True,
