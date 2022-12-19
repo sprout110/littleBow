@@ -61,12 +61,18 @@ class KChart(Basebot):
         #MACD
         exp5 = df['Close'].ewm(span=5, adjust=False).mean()
         exp20 = df['Close'].ewm(span=20, adjust=False).mean()
+
         exp12 = df['Close'].ewm(span=12, adjust=False).mean()
         exp26 = df['Close'].ewm(span=26, adjust=False).mean()
         macd = exp12 - exp26
         signal = macd.ewm(span=9, adjust=False).mean()
         histogram = macd - signal
 
+        exp12 = df['Close'].ewm(span=12, adjust=False).mean()
+        exp26 = df['Close'].ewm(span=26, adjust=False).mean()
+        macd = exp12 - exp26
+        signal = macd.ewm(span=9, adjust=False).mean()
+        histogram = macd - signal
         
         
         if stock == '2412.tw' and myType == 'candle':
@@ -74,8 +80,8 @@ class KChart(Basebot):
                 mpf.make_addplot(exp20, panel=0,color='orange',linestyle='dashdot'),
                 mpf.make_addplot(exp12, panel=0,color='c',linestyle='dashdot'),
                 mpf.make_addplot(exp26, panel=0,color='lime',linestyle='dashdot'),
-                mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD'),
-                mpf.make_addplot(signal, panel = 1, color = 'orange'),
+                mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD', secondary_y = True),
+                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True),
                 mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False)
                 ]
             kwargs = dict(
