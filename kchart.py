@@ -19,13 +19,13 @@ class KChart(Basebot):
     def dosomething(self):
         msglist = self.msg.split()
         if len(msglist) == 1:
-            stock = str(self.msg[1:5])+".tw"
+            stock = str(self.msg[1:5])
             y = datetime.date.today().year
             m = datetime.date.today().month
             d = datetime.date.today().day
             imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, m, 1), 'line', '2')
         else: 
-            stock = str(msglist[0][1:5])+".tw"
+            stock = str(msglist[0][1:5])
             startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
             if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 11000000:
                 imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'candle', '1')
@@ -49,7 +49,8 @@ class KChart(Basebot):
 
         # df = yf.download(stock, start = startTime)
         df = getdata.getYahooData(stock, startTime)
-        # print(df.head(5))
+        stockInfo = getdata.getStockInfo(stock)
+        #print(stockInfo)
 
         #MAV
         exp5 = df['Close'].ewm(span=5, adjust=False).mean()
@@ -70,51 +71,88 @@ class KChart(Basebot):
         histogram_negative = histogram
         
         apds = [
-                mpf.make_addplot(exp5, panel =0,color='red',linestyle='dashdot'),
-                mpf.make_addplot(exp20, panel=0, color='orange',linestyle='dashdot'),
-                mpf.make_addplot(histogram_positive, panel = 1, type = 'bar', width = 0.7, color = 'red', alpha = 1, secondary_y = False),
+                mpf.make_addplot(exp5  , panel = 0, color='fuchsia'   ,linestyle='solid'),
+                mpf.make_addplot(exp20 , panel = 0, color='orange',linestyle='dashdot'),
+                mpf.make_addplot(exp120, panel = 0, color='yellow',linestyle='dashdot'),
+                mpf.make_addplot(exp240, panel = 0, color='lime'  ,linestyle='dashdot'),
+                mpf.make_addplot(histogram_positive, panel = 1, ylabel='DIF-MACD', type = 'bar', width = 0.7, color = 'red', alpha = 1, secondary_y = False),
                 mpf.make_addplot(histogram_negative, panel = 1, type = 'bar', width = 0.7, color = 'lime', alpha = 1, secondary_y = False),
                 mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD', secondary_y = True, linestyle='dashdot'),
-                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True, linestyle='dashdot'),
-                mpf.make_addplot(exp120, panel=0, color='lightblue',linestyle='dashdot'),
-                mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot')
+                mpf.make_addplot(signal, panel = 1, color = 'lightblue', secondary_y = True, linestyle='dashdot')
         ]
 
         kwargs = dict(
                     type = myType,
                     volume = True,
-                    title = '\n\n' + stock.upper(),
-                    ylabel_lower = 'Volume'
+                    title = '\n\n' + stockInfo.iloc[0]['stockName'] + '(' + stock.upper() + '.TW)',
+                    ylabel_lower = 'Volume',
+                    datetime_format = '%Y-%m-%d'
         )
-        kwargs['ylabel'] = stock.upper() + ' mav(5, 20, 120, 240)'
+        kwargs['ylabel'] = stock.upper() + '.TW mav(5, 20, 120, 240)'
 
         if stock == '2412.tw' and myType == 'candle':
             kwargs['ylim'] = (104, 126)
-            kwargs['datetime_format'] ='%m/%d'
             kwargs['xrotation'] = 0
         elif myType == 'candle':
-            kwargs['datetime_format'] ='%m/%d'
             kwargs['xrotation'] = 0
-        else:
-            kwargs['datetime_format'] = '%Y-%m-%d'
 
         tempFile = self.uid + serial + '.png'
 
-        mpf.plot(df, 
+        fig, axes = mpf.plot(df, 
                 **kwargs,
                 addplot = apds,
                 num_panels = 3,
                 main_panel = 0,
                 volume_panel = 2,
                 style = my_style,
-                savefig = tempFile)
+                figratio=(7,5),
+                #savefig = tempFile,
+                #hlines=dict(hlines=[12,4], linewidths=(2,3.5)),
+                tight_layout = False,
+                returnfig=True)
 
+        if myType == 'candle':
+            ##format = '%Y-%b-%d'
+            ##format = '%Y-%m-%d'
+            #format = '%b-%d'
+            format = '%m/%d'
+            newLabels(df, axes, format)
+        else:
+            format = '%Y-%m-%d'
+            newLabels(df, axes, format)
+        
+        fig.savefig(tempFile)
+        
         imgurImg = getimg.getImgurImg(stock, tempFile)
-        # im = pyimgur.Imgur(IMGUR_CLIENT_ID)
-        # uploadImg = im.upload_image(tempFile, title = stock + " chart")
 
         return imgurImg.link
 
+
+weekdayDict = {
+    '0':'一',
+    '1':'二',
+    '2':'三',
+    '3':'四',
+    '4':'五',
+    '5':'六',
+    '6':'日'
+}
+
+def newLabels(df, axes, format):
+    newxticks = []
+    newlabels = []
+    for xt in axes[0].get_xticks():
+        p = int(xt)
+        if p >= 0 and p < len(df):
+            ts = df.index[p]
+            newxticks.append(p)
+            newlabels.append(ts.strftime(format)+ weekdayDict[str(ts.weekday())])
+
+    newxticks.append(len(df)-1)
+    newlabels.append(df.index[len(df)-1].strftime(format)+ weekdayDict[str(df.index[len(df)-1].weekday())])
+
+    axes[0].set_xticks(newxticks)
+    axes[0].set_xticklabels(newlabels)
 
 my_color = mpf.make_marketcolors(
     up = 'red',
@@ -131,7 +169,10 @@ my_style = mpf.make_mpf_style(
     gridaxis='both',
     gridstyle='-.',
     gridcolor='#E1E1E1',
-    #rc={'font.family':'Microsoft JhengHei'}
+    rc={
+        'font.family':'Microsoft JhengHei',
+        'axes.unicode_minus':'False'
+    }
 )
 
 title_font = {

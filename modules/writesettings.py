@@ -9,7 +9,7 @@ class WriteSettings(Basebot):
     def dosomething(self):
         try:
             list = mydb.read_user_setting(self.uid)
-            print(list)
+            #print(list)
             if len(list) > 1:
                 mydb.delete_user_setting(self.uid)
                 mydb.write_user_setting(self.uid, self.msg)
