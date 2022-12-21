@@ -12,7 +12,7 @@ class ChoiceStock(Basebot):
                 quick_reply= QuickReply(
                     items = [
                         QuickReplyButton(
-                            action = MessageAction('台機電','2330'),
+                            action = MessageAction('台積電','2330'),
                         ),
                         QuickReplyButton(
                             action= MessageAction('中華電','2412')

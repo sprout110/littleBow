@@ -8,6 +8,7 @@ from modules.writesettings import WriteSettings
 from modules.choicestock import ChoiceStock
 from modules.choicekchart import ChoiceKChart
 from kchart import KChart
+from indices import Indices
 
 def UserSay(uid, msg):
     #print(msg)
@@ -15,6 +16,8 @@ def UserSay(uid, msg):
         return StockNow(uid, msg)
     elif re.match('^k[0-9]{4}', msg.lower()):
         return KChart(uid, msg)
+    elif '^TWII' == msg.upper():
+        return Indices(uid, msg)
     elif '@說明'  == msg:
         return HowTo(uid, msg)
     elif '@顯示設定' == msg:

@@ -17,28 +17,19 @@ class KChart(Basebot):
 
     def dosomething(self):
         msglist = self.msg.split()
-        if len(msglist) == 1: #預設圖為線型，5日，20日均線圖。
-            if self.msg == '＠k線圖':
-                settinglist = mydb.read_user_setting(self.uid)
-                if len(settinglist) == 0:
-                    mydb.write_user_setting(self.uid, '2412')
-                    settinglist = [{'uid':self.uid, 'stock':'2412'}]
-                stock = settinglist[0]['stock']+".tw"
-            else:
-                stock = str(self.msg[1:5])+".tw"
-            
+        if len(msglist) == 1:
+            stock = str(self.msg[1:5])+".tw"
             y = datetime.date.today().year
             m = datetime.date.today().month
             d = datetime.date.today().day
-            # print(datetime.date(y-3, m, d))
-            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, m, 1), 'line', (5, 20), '2')
-        else: # ToDo: 若開始和結束時間小於3個月，candle圖，其它為均線圖。
+            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, m, 1), 'line', '2')
+        else: 
             stock = str(msglist[0][1:5])+".tw"
             startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
             if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 11000000:
-                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'candle', (5, 20), '1')
+                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'candle', '1')
             else:    
-                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'line', (5, 20), '1')
+                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'line', '1')
 
         self.result = stock + ' KChart OK imgUrl ' + imgUrl
 
@@ -53,89 +44,65 @@ class KChart(Basebot):
                             stock, 
                             startTime, 
                             myType = 'candle', 
-                            myMav = (5, 20), 
                             serial = '0'):
 
         df = yf.download(stock, start = startTime)
 
-        #MACD
+        #MAV
         exp5 = df['Close'].ewm(span=5, adjust=False).mean()
         exp20 = df['Close'].ewm(span=20, adjust=False).mean()
+        exp120 = df['Close'].ewm(span=120, adjust=False).mean()
         exp240 = df['Close'].ewm(span=240, adjust=False).mean()
-        #print(exp240.head(10))
-        exp12 = df['Close'].ewm(span=12, adjust=False).mean()
-        exp26 = df['Close'].ewm(span=26, adjust=False).mean()
-        macd = exp12 - exp26
-        signal = macd.ewm(span=9, adjust=False).mean()
-        histogram = macd - signal
 
+        #MACD
         exp12 = df['Close'].ewm(span=12, adjust=False).mean()
         exp26 = df['Close'].ewm(span=26, adjust=False).mean()
         macd = exp12 - exp26
         signal = macd.ewm(span=9, adjust=False).mean()
         histogram = macd - signal
+        histogram[histogram<0] = None
+        histogram_positive = histogram
+        histogram = macd - signal
+        histogram[histogram>0] = None
+        histogram_negative = histogram
         
-        
-        if stock == '2412.tw' and myType == 'candle':
-            apds = [mpf.make_addplot(exp5, panel =0,color='red',linestyle='dashdot'),
+        apds = [
+                mpf.make_addplot(exp5, panel =0,color='red',linestyle='dashdot'),
                 mpf.make_addplot(exp20, panel=0, color='orange',linestyle='dashdot'),
-                mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot'),
-                mpf.make_addplot(exp12, panel=0,color='c',linestyle='dashdot'),
-                mpf.make_addplot(exp26, panel=0,color='lime',linestyle='dashdot'),
-                mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False),
-                mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD', secondary_y = True),
-                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True,linestyle='dashdot')
-                ]
-            kwargs = dict(
-                type = myType,
-                volume = True,
-                title = '\n\n' + stock.upper(),
-                ylabel = stock.upper() + ' mav(5, 12, 20, 26, 240)',
-                ylabel_lower = 'Volume',
-                #figratio=(1200/72,480/60),
-                #figscale=3,
-                datetime_format='%m/%d',
-                xrotation = 0,
-                ylim = (104,120)
-            )
-        elif myType == 'candle':
-            apds = [mpf.make_addplot(exp5, panel =0,color='red',linestyle='dashdot'),
-                mpf.make_addplot(exp20, panel=0,color='orange',linestyle='dashdot'),
-                mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot'),
-                mpf.make_addplot(exp12, panel=0,color='c',linestyle='dashdot'),
-                mpf.make_addplot(exp26, panel=0,color='lime',linestyle='dashdot'),
-                mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False),
-                mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD', secondary_y = True),
-                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True,linestyle='dashdot')]
-            kwargs = dict(
-                type = myType,
-                volume = True,
-                title = '\n\n' + stock.upper(),
-                ylabel = stock.upper() + ' mav(5, 12, 20, 26, 240)',
-                ylabel_lower = 'Volume',
-                #figratio=(1200/72,480/60),
-                #figscale=3,
-                datetime_format='%m/%d',
-                xrotation = 0
-            )
-        else:
-            apds = [mpf.make_addplot(exp5, panel =0,color='red',linestyle='dashdot'),
-                mpf.make_addplot(exp20, panel=0,color='orange',linestyle='dashdot'),
-                mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot'),
-                mpf.make_addplot(histogram, panel = 1, type = 'bar', width = 0.7, color = 'dimgray', alpha = 1, secondary_y = False),
-                mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD', secondary_y = True),
-                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True,linestyle='dashdot')]
-            kwargs = dict(
-                type = myType,
-                volume = True,
-                title = '\n\n' + stock.upper(),
-                ylabel = stock.upper() + ' mav(5, 12, 20, 26, 240)',
-                ylabel_lower = 'Volume',
-                datetime_format='%Y-%m-%d'
-            )
+                mpf.make_addplot(histogram_positive, panel = 1, type = 'bar', width = 0.7, color = 'red', alpha = 1, secondary_y = False),
+                mpf.make_addplot(histogram_negative, panel = 1, type = 'bar', width = 0.7, color = 'lime', alpha = 1, secondary_y = False),
+                mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD', secondary_y = True, linestyle='dashdot'),
+                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True, linestyle='dashdot')
+        ]
+        
+        kwargs = dict(
+                    type = myType,
+                    volume = True,
+                    title = '\n\n' + stock.upper(),
+                    ylabel_lower = 'Volume'
+        )
 
+        if stock == '2412.tw' and myType == 'candle':
+            apds.append(mpf.make_addplot(exp120, panel=0, color='lightblue',linestyle='dashdot'))
+            apds.append(mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot'))
+            kwargs['ylabel'] = stock.upper() + ' mav(5, 20, 120, 240)'
+            kwargs['ylim'] = (104, 126)
+            kwargs['datetime_format'] ='%m/%d'
+            kwargs['xrotation'] = 0
+
+        elif myType == 'candle':
+            apds.append([mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot')])
+            kwargs['ylabel'] = stock.upper() + ' mav(5, 20, 240)'
+            kwargs['datetime_format'] ='%m/%d'
+            kwargs['xrotation'] = 0
+
+        else:
+            apds.append([mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot')])
+            kwargs['ylabel'] = stock.upper() + ' mav(5, 20, 240)'
+            kwargs['datetime_format'] = '%Y-%m-%d'
 
         tempFile = self.uid + serial + '.png'
+
         mpf.plot(df, 
                 **kwargs,
                 addplot = apds,
@@ -168,3 +135,52 @@ my_style = mpf.make_mpf_style(
     gridcolor='#E1E1E1',
     #rc={'font.family':'Microsoft JhengHei'}
 )
+
+title_font = {
+    'fontname': 'Microsoft JhengHei', 
+              'size':     '16',
+              'color':    'black',
+              'weight':   'bold',
+              'va':       'bottom',
+              'ha':       'center'}
+
+large_red_font = {
+    'fontname': 'Arial',
+                  'size':     '24',
+                  'color':    'red',
+                  'weight':   'bold',
+                  'va':       'bottom'}
+
+large_green_font = {
+    'fontname': 'Arial',
+                    'size':     '24',
+                    'color':    'green',
+                    'weight':   'bold',
+                    'va':       'bottom'}
+
+small_red_font = {
+    'fontname': 'Arial',
+                  'size':     '12',
+                  'color':    'red',
+                  'weight':   'bold',
+                  'va':       'bottom'}
+
+small_green_font = {
+    'fontname': 'Arial',
+                    'size':     '12',
+                    'color':    'green',
+                    'weight':   'bold',
+                    'va':       'bottom'}
+
+normal_label_font = {
+    'fontname': 'Microsoft JhengHei',
+                     'size':     '12',
+                     'color':    'black',
+                     'va':       'bottom',
+                     'ha':       'right'}
+normal_font = {
+    'fontname': 'Arial',
+               'size':     '12',
+               'color':    'black',
+               'va':       'bottom',
+               'ha':       'left'}
