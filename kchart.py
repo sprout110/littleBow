@@ -2,12 +2,13 @@ from linebot.models import (ImageSendMessage, TextSendMessage)
 import matplotlib
 matplotlib.use('Agg')
 import mplfinance as mpf
-import yfinance as yf
 import pyimgur
 import datetime
 from model.basebot import Basebot
 from conf import settings
 import model.mydb as mydb
+import model.getdata as getdata
+import model.getimg as getimg
 
 IMGUR_CLIENT_ID = settings.IMGUR_CLIENT_ID
 
@@ -46,7 +47,9 @@ class KChart(Basebot):
                             myType = 'candle', 
                             serial = '0'):
 
-        df = yf.download(stock, start = startTime)
+        # df = yf.download(stock, start = startTime)
+        df = getdata.getYahooData(stock, startTime)
+        # print(df.head(5))
 
         #MAV
         exp5 = df['Close'].ewm(span=5, adjust=False).mean()
@@ -72,33 +75,27 @@ class KChart(Basebot):
                 mpf.make_addplot(histogram_positive, panel = 1, type = 'bar', width = 0.7, color = 'red', alpha = 1, secondary_y = False),
                 mpf.make_addplot(histogram_negative, panel = 1, type = 'bar', width = 0.7, color = 'lime', alpha = 1, secondary_y = False),
                 mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD', secondary_y = True, linestyle='dashdot'),
-                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True, linestyle='dashdot')
+                mpf.make_addplot(signal, panel = 1, color = 'orange', secondary_y = True, linestyle='dashdot'),
+                mpf.make_addplot(exp120, panel=0, color='lightblue',linestyle='dashdot'),
+                mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot')
         ]
-        
+
         kwargs = dict(
                     type = myType,
                     volume = True,
                     title = '\n\n' + stock.upper(),
                     ylabel_lower = 'Volume'
         )
+        kwargs['ylabel'] = stock.upper() + ' mav(5, 20, 120, 240)'
 
         if stock == '2412.tw' and myType == 'candle':
-            apds.append(mpf.make_addplot(exp120, panel=0, color='lightblue',linestyle='dashdot'))
-            apds.append(mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot'))
-            kwargs['ylabel'] = stock.upper() + ' mav(5, 20, 120, 240)'
             kwargs['ylim'] = (104, 126)
             kwargs['datetime_format'] ='%m/%d'
             kwargs['xrotation'] = 0
-
         elif myType == 'candle':
-            apds.append([mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot')])
-            kwargs['ylabel'] = stock.upper() + ' mav(5, 20, 240)'
             kwargs['datetime_format'] ='%m/%d'
             kwargs['xrotation'] = 0
-
         else:
-            apds.append([mpf.make_addplot(exp240, panel=0, color='yellow',linestyle='dashdot')])
-            kwargs['ylabel'] = stock.upper() + ' mav(5, 20, 240)'
             kwargs['datetime_format'] = '%Y-%m-%d'
 
         tempFile = self.uid + serial + '.png'
@@ -112,10 +109,11 @@ class KChart(Basebot):
                 style = my_style,
                 savefig = tempFile)
 
-        im = pyimgur.Imgur(IMGUR_CLIENT_ID)
-        uploaded_image = im.upload_image(tempFile, title = stock + " candlestick chart")
+        imgurImg = getimg.getImgurImg(stock, tempFile)
+        # im = pyimgur.Imgur(IMGUR_CLIENT_ID)
+        # uploadImg = im.upload_image(tempFile, title = stock + " chart")
 
-        return uploaded_image.link
+        return imgurImg.link
 
 
 my_color = mpf.make_marketcolors(
