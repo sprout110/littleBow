@@ -171,6 +171,8 @@ my_color = mpf.make_marketcolors(
     volume = 'inherit',
 )
 
+# NotoSansTC-Light.otf
+zhfont1 = mpf.font_manager.FontProperties(fname='NotoSansTC-Light.otf')
 my_style = mpf.make_mpf_style(
     marketcolors = my_color,
     figcolor='#EEEEEE',
@@ -179,7 +181,7 @@ my_style = mpf.make_mpf_style(
     gridstyle='-.',
     gridcolor='#E1E1E1',
     rc={
-        'font.family': ['SimHei', 'Microsoft JhengHei', 'AR PL UMing CN'],
+        'font.family': ['zhfont1', 'SimHei', 'Microsoft JhengHei', 'AR PL UMing CN'],
         'axes.unicode_minus':'False'
     }
 )
