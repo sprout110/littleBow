@@ -19,15 +19,19 @@ class KChart(Basebot):
     def dosomething(self):
         msglist = self.msg.split()
         if len(msglist) == 1:
+            #print('hi')
             stock = str(self.msg[1:5])
             y = datetime.date.today().year
             m = datetime.date.today().month
             d = datetime.date.today().day
             imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, m, 1), 'line', '2')
         else: 
+            #print('hello')
             stock = str(msglist[0][1:5])
+            #print(stock)
             startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
             if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 11000000:
+                #print('candle')
                 imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'candle', '1')
             else:    
                 imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'line', '1')
@@ -49,8 +53,9 @@ class KChart(Basebot):
 
         # df = yf.download(stock, start = startTime)
         df = getdata.getYahooData(stock, startTime)
+        #print(df.head(2))
         stockInfo = getdata.getStockInfo(stock)
-        # print(stockInfo)
+        #print(stockInfo)
 
         #MAV
         exp5 = df['Close'].ewm(span=5, adjust=False).mean()
@@ -71,10 +76,10 @@ class KChart(Basebot):
         histogram_negative = histogram
         
         apds = [
-                mpf.make_addplot(exp5  , panel = 0, color='fuchsia'   ,linestyle='solid'),
-                mpf.make_addplot(exp20 , panel = 0, color='orange',linestyle='dashdot'),
-                mpf.make_addplot(exp120, panel = 0, color='yellow',linestyle='dashdot'),
-                mpf.make_addplot(exp240, panel = 0, color='lime'  ,linestyle='dashdot'),
+                mpf.make_addplot(exp5  , panel = 0, color='fuchsia'    ,linestyle='dashed'),
+                mpf.make_addplot(exp20 , panel = 0, color='orange' ,linestyle='dashdot'),
+                mpf.make_addplot(exp120, panel = 0, color='yellow' ,linestyle='dashdot'),
+                mpf.make_addplot(exp240, panel = 0, color='green'  ,linestyle='dashdot'),
                 mpf.make_addplot(histogram_positive, panel = 1, ylabel='DIF-MACD', type = 'bar', width = 0.7, color = 'red', alpha = 1, secondary_y = False),
                 mpf.make_addplot(histogram_negative, panel = 1, type = 'bar', width = 0.7, color = 'lime', alpha = 1, secondary_y = False),
                 mpf.make_addplot(macd, panel = 1, color = 'red', ylabel = 'MACD', secondary_y = True, linestyle='dashdot'),
@@ -84,13 +89,13 @@ class KChart(Basebot):
         kwargs = dict(
                     type = myType,
                     volume = True,
-                    title = '\n\n' + stockInfo['stockName'].iloc[0] + '(' + stock.upper() + '.TW)',
+                    title = '\n\n' + stock.upper() + '.TW - ' + stockInfo['stockName'].iloc[0],
                     ylabel_lower = 'Volume',
-                    datetime_format = '%Y-%m-%d'
+                    datetime_format = '%Y-%m-%d',
+                    ylabel = 'Price 週-紅 月-橙 半年—黃 年—綠'
         )
-        kwargs['ylabel'] = stock.upper() + '.TW mav(5, 20, 120, 240)'
 
-        if stock == '2412.tw' and myType == 'candle':
+        if stock == '2412' and myType == 'candle':
             kwargs['ylim'] = (104, 126)
             kwargs['xrotation'] = 0
         elif myType == 'candle':
@@ -98,9 +103,12 @@ class KChart(Basebot):
 
         tempFile = self.uid + serial + '.png'
 
-        fig, axes = mpf.plot(df, 
+        #print(tempFile)
+
+        fig, axes = mpf.plot(
+                data = df,
+                addplot = apds, 
                 **kwargs,
-                addplot = apds,
                 num_panels = 3,
                 main_panel = 0,
                 volume_panel = 2,
@@ -111,6 +119,7 @@ class KChart(Basebot):
                 tight_layout = False,
                 returnfig=True)
 
+        #print('ok??')
         if myType == 'candle':
             ##format = '%Y-%b-%d'
             ##format = '%Y-%m-%d'
@@ -170,7 +179,7 @@ my_style = mpf.make_mpf_style(
     gridstyle='-.',
     gridcolor='#E1E1E1',
     rc={
-        'font.family':'Microsoft JhengHei',
+        'font.family': ['SimHei', 'Microsoft JhengHei'],
         'axes.unicode_minus':'False'
     }
 )
