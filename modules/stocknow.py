@@ -14,9 +14,6 @@ class StockNow(Basebot):
         try:
             if self.msg == '@目前股價':
                 list = mydb.read_user_setting(self.uid)
-                if len(list) == 0:
-                    mydb.write_user_setting(self.uid, '2412')
-                    list = [{'uid':self.uid, 'stock':'2412'}]
                 stock = list[0]['stock']
             else:
                 stock = str(self.msg[1:5])

@@ -54,19 +54,57 @@ cache = Cache(maxsize=100)
 def delete_user_setting(uid):
     cache[uid] = None
 
-def write_user_setting(uid, stock):
-    cache[uid] = stock
+defaultFavorite = [
+            {
+                'stock' : '2330',
+                'stockName' : '台積電'
+            }, {
+                'stock' : '2412',
+                'stockName' : '中華電'
+            }, {
+                'stock' : '2002',
+                'stockName' : '中鋼'
+            }, {
+                'stock' : '0050',
+                'stockName' : '台灣50'
+            }, {
+                'stock' : '2020',
+                'stockName' : '美亞'
+            }, {
+                'stock' : '1216',
+                'stockName' : '統一'
+            }
+        ]
 
-def update_user_setting(uid, stock):
-    cache[uid] = stock 
+def write_user_setting(uid, stock, favorite = defaultFavorite):
+    cache[uid] = {
+        'stock' : stock, 
+        'favorite' : favorite
+    }  
+
+def update_user_setting(uid, stock, favorite = defaultFavorite):
+    cache[uid] = {
+        'stock' : stock, 
+        'favorite' : favorite
+    }
 
 def read_user_setting(uid):
     try:
-        cel = [{"uid": uid, "stock":cache[uid]}]
+        cel = [{
+            'uid' : uid, 
+            'stock' : cache[uid]['stock'],
+            'favorite' : cache[uid]['favorite']
+        }]
     except:
-        cel = [{"uid": uid, "stock": '2412'}]
+        cel = [{
+            "uid" : uid, 
+            "stock" : '2412',
+            'favorite' : defaultFavorite
+        }]
     
     return cel
+
+
 
 #========================= 股票名稱對應 ===========================
 # 這個部份, 應該從即時資料來, 那表示要寫檔

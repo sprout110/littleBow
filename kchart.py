@@ -50,7 +50,7 @@ class KChart(Basebot):
         # df = yf.download(stock, start = startTime)
         df = getdata.getYahooData(stock, startTime)
         stockInfo = getdata.getStockInfo(stock)
-        #print(stockInfo)
+        # print(stockInfo)
 
         #MAV
         exp5 = df['Close'].ewm(span=5, adjust=False).mean()
@@ -84,7 +84,7 @@ class KChart(Basebot):
         kwargs = dict(
                     type = myType,
                     volume = True,
-                    title = '\n\n' + stockInfo.iloc[0]['stockName'] + '(' + stock.upper() + '.TW)',
+                    title = '\n\n' + stockInfo['stockName'].iloc[0] + '(' + stock.upper() + '.TW)',
                     ylabel_lower = 'Volume',
                     datetime_format = '%Y-%m-%d'
         )

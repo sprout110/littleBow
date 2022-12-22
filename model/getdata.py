@@ -15,8 +15,12 @@ def getStockInfo(stock):
     df.index = df.index.map(str)
     #print(type(df.index))
     try:
-        return df[df.index == stock]
+        data = df[df.index == stock]
+        if df[df.index == stock].empty:
+            return df[df.index == '0']
+        else:
+            return df[df.index == stock]
     except:
-        return []
+        return df[df.index == '0']
 
 
