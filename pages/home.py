@@ -1,4 +1,5 @@
 from model.usersay import UserSay
+from matplotlib import font_manager
 
 def Home():
     result = ''
@@ -9,4 +10,8 @@ def Home():
         for item in returnMessages:
             result += str(item) + '<br />'
     
+    font_set = {f.name for f in font_manager.fontManager.ttflist}
+    for f in font_set:
+        result += str(f) + '<br />'
+        
     return result

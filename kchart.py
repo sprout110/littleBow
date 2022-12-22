@@ -179,7 +179,7 @@ my_style = mpf.make_mpf_style(
     gridstyle='-.',
     gridcolor='#E1E1E1',
     rc={
-        'font.family': ['SimHei', 'Microsoft JhengHei'],
+        'font.family': ['SimHei', 'Microsoft JhengHei', 'AR PL UMing CN'],
         'axes.unicode_minus':'False'
     }
 )
