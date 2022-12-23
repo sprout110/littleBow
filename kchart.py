@@ -4,6 +4,8 @@ mpl.use('Agg')
 from matplotlib.font_manager import FontProperties as font
 zhfont = font(fname="NotoSansTC-Light.otf")
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as font_manager
+font_manager.fontManager.addfont("NotoSansTC-Light.otf")
 plt.rcParams['font.sans-serif'] = [zhfont.get_name()]
 plt.rcParams['axes.unicode_minus'] = False
 import mplfinance as mpf
@@ -159,8 +161,8 @@ def newLabels(df, axes, format):
 my_color = mpf.make_marketcolors(
     up = 'red',
     down = 'limegreen',
-    edge = 'black',
-    wick = 'black',
+    edge = 'inherit',
+    wick = 'inherit',
     volume = 'inherit',
 )
 
@@ -168,10 +170,10 @@ my_color = mpf.make_marketcolors(
 # MicrosoftJhengHeiLight-01.ttf
 # zhfont = mpl.font_manager.FontProperties(fname='NotoSansTC-Light.otf').get_name()
 # print(zhfont)
-# rc_font = {
-#     'font.family': zhfont, #'Microsoft JhengHei',
-#     'axes.unicode_minus': 'False'
-# }
+rc_font = {
+     'font.family': zhfont.get_name(), #'Microsoft JhengHei',
+     'axes.unicode_minus': 'False'
+}
 
 my_style = mpf.make_mpf_style(
     marketcolors = my_color,
@@ -180,7 +182,7 @@ my_style = mpf.make_mpf_style(
     gridaxis='both',
     gridstyle='-.',
     gridcolor='#E1E1E1',
-    #rc=rc_font
+    rc=rc_font
 )
 
 #['zhfont1', 'SimHei', 'Microsoft JhengHei', 'AR PL UMing CN'],
