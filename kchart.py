@@ -1,12 +1,15 @@
 from linebot.models import (ImageSendMessage, TextSendMessage)
-import matplotlib
-matplotlib.use('Agg')
+import matplotlib as mpl
+mpl.use('Agg')
+from matplotlib.font_manager import FontProperties as font
+zhfont = font(fname="NotoSansTC-Light.otf")
+import matplotlib.pyplot as plt
+plt.rcParams['font.sans-serif'] = [zhfont.get_name()]
+plt.rcParams['axes.unicode_minus'] = False
 import mplfinance as mpf
-import pyimgur
 import datetime
 from model.basebot import Basebot
 from conf import settings
-import model.mydb as mydb
 import model.getdata as getdata
 import model.getimg as getimg
 
@@ -19,19 +22,15 @@ class KChart(Basebot):
     def dosomething(self):
         msglist = self.msg.split()
         if len(msglist) == 1:
-            #print('hi')
             stock = str(self.msg[1:5])
             y = datetime.date.today().year
             m = datetime.date.today().month
             d = datetime.date.today().day
             imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, m, 1), 'line', '2')
         else: 
-            #print('hello')
             stock = str(msglist[0][1:5])
-            #print(stock)
             startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
             if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 11000000:
-                #print('candle')
                 imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'candle', '1')
             else:    
                 imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'line', '1')
@@ -51,11 +50,8 @@ class KChart(Basebot):
                             myType = 'candle', 
                             serial = '0'):
 
-        # df = yf.download(stock, start = startTime)
         df = getdata.getYahooData(stock, startTime)
-        #print(df.head(2))
-        stockInfo = getdata.getStockInfo(stock)
-        #print(stockInfo)
+        dfStockInfo = getdata.getStockInfo(stock)
 
         #MAV
         exp5 = df['Close'].ewm(span=5, adjust=False).mean()
@@ -89,7 +85,7 @@ class KChart(Basebot):
         kwargs = dict(
                     type = myType,
                     volume = True,
-                    title = '\n\n' + stock.upper() + '.TW - ' + stockInfo['stockName'].iloc[0],
+                    title = '\n\n' + stock.upper() + '.TW - ' + dfStockInfo['stockName'].iloc[0],
                     ylabel_lower = 'Volume',
                     datetime_format = '%Y-%m-%d',
                     ylabel = 'Price 週-紅 月-橙 半年—黃 年—綠'
@@ -102,8 +98,6 @@ class KChart(Basebot):
             kwargs['xrotation'] = 0
 
         tempFile = self.uid + serial + '.png'
-
-        #print(tempFile)
 
         fig, axes = mpf.plot(
                 data = df,
@@ -119,7 +113,6 @@ class KChart(Basebot):
                 tight_layout = False,
                 returnfig=True)
 
-        #print('ok??')
         if myType == 'candle':
             ##format = '%Y-%b-%d'
             ##format = '%Y-%m-%d'
@@ -166,13 +159,20 @@ def newLabels(df, axes, format):
 my_color = mpf.make_marketcolors(
     up = 'red',
     down = 'limegreen',
-    edge = 'inherit',
-    wick = 'inherit',
+    edge = 'black',
+    wick = 'black',
     volume = 'inherit',
 )
 
 # NotoSansTC-Light.otf
-zhfont1 = mpf.font_manager.FontProperties(fname='NotoSansTC-Light.otf')
+# MicrosoftJhengHeiLight-01.ttf
+# zhfont = mpl.font_manager.FontProperties(fname='NotoSansTC-Light.otf').get_name()
+# print(zhfont)
+# rc_font = {
+#     'font.family': zhfont, #'Microsoft JhengHei',
+#     'axes.unicode_minus': 'False'
+# }
+
 my_style = mpf.make_mpf_style(
     marketcolors = my_color,
     figcolor='#EEEEEE',
@@ -180,11 +180,10 @@ my_style = mpf.make_mpf_style(
     gridaxis='both',
     gridstyle='-.',
     gridcolor='#E1E1E1',
-    rc={
-        'font.family': ['zhfont1', 'SimHei', 'Microsoft JhengHei', 'AR PL UMing CN'],
-        'axes.unicode_minus':'False'
-    }
+    #rc=rc_font
 )
+
+#['zhfont1', 'SimHei', 'Microsoft JhengHei', 'AR PL UMing CN'],
 
 title_font = {
     'fontname': 'Microsoft JhengHei', 
