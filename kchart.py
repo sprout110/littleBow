@@ -28,7 +28,7 @@ class KChart(Basebot):
             y = datetime.date.today().year
             m = datetime.date.today().month
             d = datetime.date.today().day
-            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, m, 1), 'line', '2')
+            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-1, m, 1), 'line', '2')
         else: 
             stock = str(msglist[0][1:5])
             startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
