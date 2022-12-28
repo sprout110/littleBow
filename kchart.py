@@ -85,7 +85,7 @@ class KChart(Basebot):
                     #title = '\n\n' + stock.upper() + '.TW - ' + dfStockInfo['stockName'].iloc[0],
                     ylabel_lower = 'Volume',
                     datetime_format = '%Y-%m-%d',
-                    ylabel = 'Price 週-紅 月-橙 半年-黃 年-綠'
+                    ylabel = dfStockInfo['stockName'].iloc[0] +' 股價 週線-紅 月線-橙 半年-黃 年線-綠'
         )
 
         if stock == '2412' and myType == 'candle':
@@ -310,5 +310,5 @@ normal_font = {
                'va':       'bottom',
                'ha':       'left'}
 
-# testKchart = KChart('uid','k2412 2022-09-01')
-# testKchart.dosomething(test = True)
+#testKchart = KChart('uid','k2412 2012-09-01')
+#testKchart.dosomething(test = True)
