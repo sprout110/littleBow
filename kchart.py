@@ -28,14 +28,19 @@ class KChart(Basebot):
             y = datetime.date.today().year
             m = datetime.date.today().month
             d = datetime.date.today().day
-            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, m, 1), 'line', '2', test)
-        else: 
+            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, m, 1), datetime.datetime.today(), 'line', '2', test)
+        elif len(msglist) == 2:
             stock = str(msglist[0][1:5])
             startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
             if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 11000000:
-                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'candle', '1', test)
+                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, datetime.datetime.today(), 'candle', '1', test)
             else:    
-                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, 'line', '1', test)
+                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, datetime.datetime.today(), 'line', '1', test)
+        elif len(msglist) == 3:
+            stock = str(msglist[0][1:5])
+            startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
+            endTime = datetime.datetime.strptime(msglist[2], '%Y-%m-%d')
+            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, endTime, 'line', '1', test)
 
         self.result = stock + ' KChart OK imgUrl ' + imgUrl
 
@@ -49,6 +54,7 @@ class KChart(Basebot):
                             IMGUR_CLIENT_ID, 
                             stock, 
                             startTime, 
+                            endTime,
                             myType = 'candle', 
                             serial = '0',
                             test = False):
@@ -56,7 +62,7 @@ class KChart(Basebot):
         if test == False:
             mpl.use('Agg')
 
-        df = getdata.getData(stock, startTime)
+        df = getdata.getData(stock, startTime, endTime)
         last_data = df.iloc[-1]
         last2_data = df.iloc[-2]
         dfStockInfo = getdata.getStockInfo(stock)
@@ -310,5 +316,5 @@ normal_font = {
                'va':       'bottom',
                'ha':       'left'}
 
-#testKchart = KChart('uid','k2412 2012-09-01')
+#testKchart = KChart('uid','k2412 2012-1-1 2014-1-1')
 #testKchart.dosomething(test = True)
