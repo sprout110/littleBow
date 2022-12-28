@@ -28,7 +28,7 @@ class KChart(Basebot):
             y = datetime.date.today().year
             m = datetime.date.today().month
             d = datetime.date.today().day
-            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.date(y-3, m, 1), datetime.datetime.today(), 'line', '2', test)
+            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.datetime(y-3, m, 1), datetime.datetime.today(), 'line', '2', test)
         elif len(msglist) == 2:
             stock = str(msglist[0][1:5])
             startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
@@ -316,5 +316,5 @@ normal_font = {
                'va':       'bottom',
                'ha':       'left'}
 
-#testKchart = KChart('uid','k2412 2012-1-1 2014-1-1')
-#testKchart.dosomething(test = True)
+testKchart = KChart('uid','k2412')
+testKchart.dosomething(test = True)
