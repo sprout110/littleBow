@@ -14,6 +14,7 @@ from model.basebot import Basebot
 from conf import settings
 import model.getdata as getdata
 import model.getimg as getimg
+import os
 
 IMGUR_CLIENT_ID = settings.IMGUR_CLIENT_ID
 
@@ -23,32 +24,48 @@ class KChart(Basebot):
 
     def dosomething(self, test = False):
         msglist = self.msg.split()
+
+        y = datetime.date.today().year
+        m = datetime.date.today().month
+        d = datetime.date.today().day
+
+        tempFile = ''
+
         if len(msglist) == 1:
             stock = str(self.msg[1:5])
-            y = datetime.date.today().year
-            m = datetime.date.today().month
-            d = datetime.date.today().day
-            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.datetime(y-3, m, 1), datetime.datetime.today(), 'line', '2', test)
+            tempFile = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.datetime(y-3, m, 1), datetime.datetime.today(), 'line', '2', test)
         elif len(msglist) == 2:
             stock = str(msglist[0][1:5])
             startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
+            endTime = datetime.datetime.today()
             if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 11000000:
-                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, datetime.datetime.today(), 'candle', '1', test)
-            else:    
-                imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, datetime.datetime.today(), 'line', '1', test)
+                tempFile = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, endTime, 'candle', '1', test)
+            else:
+                figName = stock + startTime.strftime("%Y%m%d") + endTime.strftime("%Y%m%d") + ".png"
+                if os.path.exists(figName):
+                    tempFile = figName
+                else:
+                    tempFile = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, endTime, 'line', '1', test, figName)
+                    if test == True:
+                        mpf.show()
         elif len(msglist) == 3:
             stock = str(msglist[0][1:5])
             startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
             endTime = datetime.datetime.strptime(msglist[2], '%Y-%m-%d')
-            imgUrl = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, endTime, 'line', '1', test)
+            tempFile = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, endTime, 'line', '1', test)
 
-        self.result = stock + ' KChart OK imgUrl ' + imgUrl
+        if test == True:
+            imgurImg = NullObj
+        else:
+            imgurImg = getimg.getImgurImg(stock, tempFile)
+
+        self.result = stock + ' KChart OK imgUrl ' + imgurImg.link
 
         return [TextSendMessage('早盤交易時間 09:00 - 13:30'),
                 TextSendMessage('盤後交易時間 14:00 - 14:30'),
                 TextSendMessage('盤中零股時間 09:00 - 13:30'),
                 TextSendMessage('盤後零股時間 13:40 - 14:30'),
-                ImageSendMessage(original_content_url = imgUrl, preview_image_url = imgUrl)]
+                ImageSendMessage(original_content_url = imgurImg.link, preview_image_url = imgurImg.link)]
 
     def plot_stcok_k_chart(self, 
                             IMGUR_CLIENT_ID, 
@@ -57,7 +74,8 @@ class KChart(Basebot):
                             endTime,
                             myType = 'candle', 
                             serial = '0',
-                            test = False):
+                            test = False,
+                            figName = ''):
 
         if test == False:
             mpl.use('Agg')
@@ -100,7 +118,11 @@ class KChart(Basebot):
         elif myType == 'candle':
             kwargs['xrotation'] = 45
 
-        tempFile = self.uid + serial + '.png'
+        tempFile = ''
+        if figName == '':
+            tempFile = self.uid + serial + '.png'
+        else:
+            tempFile = figName
 
         fig = mpf.figure(style = myStyle, figsize=(12,8))
 
@@ -183,14 +205,12 @@ class KChart(Basebot):
         )
     
         if test == True:
-            mpf.show()
-            #fig.savefig(tempFile)
+            fig.savefig(tempFile)
             imgurImg = NullObj
         else:
             fig.savefig(tempFile)
-            imgurImg = getimg.getImgurImg(stock, tempFile)
 
-        return imgurImg.link
+        return tempFile
 
 
 class NullObj:
@@ -316,5 +336,5 @@ normal_font = {
                'va':       'bottom',
                'ha':       'left'}
 
-testKchart = KChart('uid','k2412')
-testKchart.dosomething(test = True)
+# testKchart = KChart('uid','k2412 2012-1-1')
+# testKchart.dosomething(test = True)
