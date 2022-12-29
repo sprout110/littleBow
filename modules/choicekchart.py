@@ -17,10 +17,7 @@ class ChoiceKChart(Basebot):
                 mydb.write_user_setting(self.uid, '2412')
                 dataList = [{'uid':self.uid, 'stock':'2412'}]
 
-            reply = TextSendMessage(
-                text = '請選擇時間：',
-                quick_reply= QuickReply(
-                    items = [
+            items = [
                         QuickReplyButton(
                             action = MessageAction('三個月', 
                             'k' + dataList[0]['stock'] + ' ' + str(y) + '-' + str(m-3) + '-1')
@@ -34,6 +31,20 @@ class ChoiceKChart(Basebot):
                             'k10' + dataList[0]['stock'] + ' ' + str(y-10) + '-' + str(m) + '-1')
                         )
                     ]
+
+            for item in range(y-1, y-10, -1):
+                # print(item)
+                startDate = str(item) + '-1-1'
+                endDate = str(item+1) + '-1-1'
+                items.append(QuickReplyButton(
+                            action = MessageAction(str(item),
+                            'k' + dataList[0]['stock'] + ' ' + startDate + ' ' + endDate)
+                        ))
+
+            reply = TextSendMessage(
+                text = '請選擇時間：',
+                quick_reply= QuickReply(
+                    items = items
                 )
             )
 
