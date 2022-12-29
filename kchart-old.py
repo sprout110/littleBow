@@ -1,14 +1,22 @@
-from linebot.models import (ImageSendMessage)
+from linebot.models import (ImageSendMessage, TextSendMessage)
 import matplotlib as mpl
 import numpy as np
+from matplotlib.font_manager import FontProperties as font
+zhfont = font(fname="NotoSansTC-Light.otf")
+import matplotlib.pyplot as plt
 import matplotlib.font_manager as font_manager
-zhfont = font_manager.FontProperties(fname="NotoSansTC-Light.otf")
 font_manager.fontManager.addfont("NotoSansTC-Light.otf")
+plt.rcParams['font.sans-serif'] = [zhfont.get_name()]
+plt.rcParams['axes.unicode_minus'] = False
 import mplfinance as mpf
 import datetime
 from model.basebot import Basebot
+from conf import settings
 import model.getdata as getdata
 import model.getimg as getimg
+import os
+
+IMGUR_CLIENT_ID = settings.IMGUR_CLIENT_ID
 
 class KChart(Basebot):
     def __init__(self, uid, msg):
@@ -25,27 +33,26 @@ class KChart(Basebot):
 
         if len(msglist) == 1:
             stock = str(self.msg[1:5])
-            startDate = datetime.datetime(y-1, m, 1)
-            endDate = datetime.datetime(y,m,d) + datetime.timedelta(days=1)
-            tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
-
+            tempFile = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , datetime.datetime(y-3, m, 1), datetime.datetime.today(), 'line', '2', test)
         elif len(msglist) == 2:
             stock = str(msglist[0][1:5])
-            startDate = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
-            endDate = datetime.datetime(y,m,d) + datetime.timedelta(days=1)
-            if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 60*60*24*120:
-                tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'candle', test)
+            startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
+            endTime = datetime.datetime.today()
+            if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 11000000:
+                tempFile = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, endTime, 'candle', '1', test)
             else:
-                tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
-            
-            if test == True:
-                mpf.show()
-
+                figName = stock + startTime.strftime("%Y%m%d") + endTime.strftime("%Y%m%d") + ".png"
+                if os.path.exists(figName):
+                    tempFile = figName
+                else:
+                    tempFile = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, endTime, 'line', '1', test, figName)
+                    if test == True:
+                        mpf.show()
         elif len(msglist) == 3:
             stock = str(msglist[0][1:5])
-            startDate = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
-            endDate = datetime.datetime.strptime(msglist[2], '%Y-%m-%d')
-            tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
+            startTime = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
+            endTime = datetime.datetime.strptime(msglist[2], '%Y-%m-%d')
+            tempFile = self.plot_stcok_k_chart(IMGUR_CLIENT_ID, stock , startTime, endTime, 'line', '1', test)
 
         if test == True:
             imgurImg = NullObj
@@ -54,22 +61,29 @@ class KChart(Basebot):
 
         self.result = stock + ' KChart OK imgUrl ' + imgurImg.link
 
-        return [ImageSendMessage(original_content_url = imgurImg.link, preview_image_url = imgurImg.link)]
+        return [TextSendMessage('早盤交易時間 09:00 - 13:30'),
+                TextSendMessage('盤後交易時間 14:00 - 14:30'),
+                TextSendMessage('盤中零股時間 09:00 - 13:30'),
+                TextSendMessage('盤後零股時間 13:40 - 14:30'),
+                ImageSendMessage(original_content_url = imgurImg.link, preview_image_url = imgurImg.link)]
 
     def plot_stcok_k_chart(self, 
+                            IMGUR_CLIENT_ID, 
                             stock, 
-                            startDate, 
-                            endDate,
+                            startTime, 
+                            endTime,
                             myType = 'candle', 
-                            test = False):
+                            serial = '0',
+                            test = False,
+                            figName = ''):
 
         if test == False:
             mpl.use('Agg')
 
-        df = getdata.getData(stock, startDate, endDate)
+        df = getdata.getData(stock, startTime, endTime)
         last_data = df.iloc[-1]
         last2_data = df.iloc[-2]
-        stockInfo = getdata.getStockInfo(stock)
+        dfStockInfo = getdata.getStockInfo(stock)
 
         #MAV
         exp5 = df['Close'].ewm(span=5, adjust=False).mean()
@@ -89,31 +103,53 @@ class KChart(Basebot):
         histogram[histogram>0] = None
         histogram_negative = histogram
         
-        tempFile = self.uid + '.png'
+        kwargs = dict(
+                    type = myType,
+                    #volume = True,
+                    #title = '\n\n' + stock.upper() + '.TW - ' + dfStockInfo['stockName'].iloc[0],
+                    ylabel_lower = 'Volume',
+                    datetime_format = '%Y-%m-%d',
+                    ylabel = dfStockInfo['stockName'].iloc[0] +' 股價 週線-紅 月線-橙 半年-黃 年線-綠'
+        )
+
+        if stock == '2412' and myType == 'candle':
+            kwargs['ylim'] = (104, 126)
+            kwargs['xrotation'] = 45
+        elif myType == 'candle':
+            kwargs['xrotation'] = 45
+
+        tempFile = ''
+        if figName == '':
+            tempFile = self.uid + serial + '.png'
+        else:
+            tempFile = figName
 
         fig = mpf.figure(style = myStyle, figsize=(12,8))
 
         ax1 = fig.add_axes([0.06, 0.35, 0.80, 0.55])
         ax2 = fig.add_axes([0.06, 0.25, 0.80, 0.10], sharex=ax1)
         ax3 = fig.add_axes([0.06, 0.15, 0.80, 0.10], sharex=ax1)
+
+        #ax1.set_ylabel('price2 週-紅 月-橙 半年-黃 年-綠')
         ax2.set_ylabel('macd')
         ax3.set_ylabel('volume')
 
-        fig.text(0.40, 0.96, stock.upper() + '.TW - ' + stockInfo['stockName'].iloc[0])
-        fig.text(0.08, 0.91, f'{last_data.name.date()}')
-        fig.text(0.18, 0.91, '最高: ')
-        fig.text(0.21, 0.91, f'{np.round(last_data["High"], 3)}')
-        fig.text(0.28, 0.91, '最低: ')
-        fig.text(0.31, 0.91, f'{np.round(last_data["Low"], 3)}')
-        fig.text(0.38, 0.91, '開盤: ')
-        fig.text(0.41, 0.91, f'{np.round(last_data["Open"], 3)}')
-        fig.text(0.48, 0.91, '前一日收盤: ')
-        fig.text(0.545, 0.91, f'{np.round(last2_data["Close"], 3)}', **small_red_font)
-        fig.text(0.60, 0.91, '目前/收盤: ')
-        fig.text(0.66, 0.91, f'{np.round(last_data["Close"], 3)}', **small_red_font)
-        fig.text(0.72, 0.91, '成交量: ')
-        fig.text(0.76, 0.91, f'{np.round(last_data["Volume"]/10000, 3)}' + '萬')
-        
+        t1 = fig.text(0.40, 0.96, stock.upper() + '.TW - ' + dfStockInfo['stockName'].iloc[0])
+        t2 = fig.text(0.40, 0.91, '開盤: ')
+        t3 = fig.text(0.43, 0.91, f'{np.round(last_data["Open"], 3)}')
+        t4 = fig.text(0.50, 0.91, '目前/收盤: ')
+        t5 = fig.text(0.56, 0.91, f'{np.round(last_data["Close"], 3)}')
+        t6 = fig.text(0.20, 0.91, '最高: ')
+        t7 = fig.text(0.23, 0.91, f'{np.round(last_data["High"], 3)}')
+        t8 = fig.text(0.30, 0.91, '最低: ')
+        t9 = fig.text(0.33, 0.91, f'{np.round(last_data["Low"], 3)}')
+        #print(df.tail(5))
+        t10 = fig.text(0.60, 0.91, '前日收盤: ')
+        t11 = fig.text(0.65, 0.91, f'{np.round(last2_data["Close"], 3)}')
+        t12 = fig.text(0.70, 0.91, '成交量: ')
+        t13 = fig.text(0.74, 0.91, f'{np.round(last_data["Volume"]/10000, 3)}' + '萬')
+        t14 = fig.text(0.08, 0.91, f'{last_data.name.date()}')
+        #print(last_data)
         apds = [
                 mpf.make_addplot(exp5  , panel = 0, color='fuchsia',linestyle='dashed' , ax = ax1),
                 mpf.make_addplot(exp20 , panel = 0, color='orange' ,linestyle='dashdot', ax = ax1),
@@ -125,18 +161,39 @@ class KChart(Basebot):
                 mpf.make_addplot(signal, panel = 1, color = 'lightblue', secondary_y = True, linestyle='dashdot', ax = ax2)
         ]
 
-        kwargs = dict(
-                    type = myType,
-                    ylabel_lower = 'Volume',
-                    datetime_format = '%Y-%m-%d',
-                    ylabel = stockInfo['stockName'].iloc[0] +' 股價 週線-紅 月線-橙 半年-黃 年線-綠'
-        )
+        # fig, axes = mpf.plot(
+        #         data = df,
+        #         addplot = apds, 
+        #         **kwargs,
+        #         num_panels = 3,
+        #         main_panel = 0,
+        #         volume_panel = 2,
+        #         style = myStyle,
+        #         figratio=(7,5),
+        #         #savefig = tempFile,
+        #         #hlines=dict(hlines=[12,4], linewidths=(2,3.5)),
+        #         tight_layout = False,
+        #         returnfig=True)
 
-        if stock == '2412' and myType == 'candle':
-            kwargs['ylim'] = (104, 126)
-            kwargs['xrotation'] = 45
-        elif myType == 'candle':
-            kwargs['xrotation'] = 45
+        # if myType == 'candle':
+        #     ##format = '%Y-%b-%d'
+        #     ##format = '%Y-%m-%d'
+        #     #format = '%b-%d'
+        #     format = '%m/%d'
+        #     newLabels(df, axes, format)
+        # else:
+        #     format = '%Y-%m-%d'
+        #     newLabels(df, axes, format)
+
+        if myType == 'candle':
+            ##format = '%Y-%b-%d'
+            ##format = '%Y-%m-%d'
+            #format = '%b-%d'
+            format = '%m/%d'
+            #newLabels2(df, ax3, format)
+        else:
+            format = '%Y-%m-%d'
+            #newLabels2(df, ax3, format)
 
         mpf.plot(
             df,
@@ -147,7 +204,11 @@ class KChart(Basebot):
             **kwargs
         )
     
-        fig.savefig(tempFile)
+        if test == True:
+            fig.savefig(tempFile)
+            imgurImg = NullObj
+        else:
+            fig.savefig(tempFile)
 
         return tempFile
 
@@ -205,8 +266,12 @@ myColor = mpf.make_marketcolors(
     volume = 'inherit',
 )
 
+# NotoSansTC-Light.otf
+# MicrosoftJhengHeiLight-01.ttf
+# zhfont = mpl.font_manager.FontProperties(fname='NotoSansTC-Light.otf').get_name()
+# print(zhfont)
 rc_font = {
-     'font.family': zhfont.get_name(),
+     'font.family': zhfont.get_name(), #'Microsoft JhengHei',
      'axes.unicode_minus': 'False'
 }
 
@@ -223,7 +288,7 @@ myStyle = mpf.make_mpf_style(
 #['zhfont1', 'SimHei', 'Microsoft JhengHei', 'AR PL UMing CN'],
 
 title_font = {
-    'fontname': zhfont.get_name(), 
+    'fontname': 'Microsoft JhengHei', 
               'size':     '16',
               'color':    'black',
               'weight':   'bold',
@@ -246,10 +311,10 @@ large_green_font = {
 
 small_red_font = {
     'fontname': 'Arial',
-                  'size':     '11',
+                  'size':     '12',
                   'color':    'red',
-                  'weight':   'bold'
-}
+                  'weight':   'bold',
+                  'va':       'bottom'}
 
 small_green_font = {
     'fontname': 'Arial',
@@ -259,7 +324,7 @@ small_green_font = {
                     'va':       'bottom'}
 
 normal_label_font = {
-    'fontname': zhfont.get_name(),
+    'fontname': 'Microsoft JhengHei',
                      'size':     '12',
                      'color':    'black',
                      'va':       'bottom',
@@ -271,5 +336,5 @@ normal_font = {
                'va':       'bottom',
                'ha':       'left'}
 
-# testKchart = KChart('uid','k2412 2022-9-1')
-# testKchart.dosomething(test = True)
+#testKchart = KChart('uid','k2412 2012-2-1')
+#testKchart.dosomething(test = True)
