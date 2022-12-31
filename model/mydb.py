@@ -105,6 +105,20 @@ def read_user_setting(uid):
     return cel
 
 
+cache2 = Cache(maxsize=1600)
+def has_update_stockhist(stock):
+    cache2[stock] = {
+        'date' : datetime.datetime.today().strftime('%Y-%m-%d')
+    }
 
-#========================= 股票名稱對應 ===========================
-# 這個部份, 應該從即時資料來, 那表示要寫檔
+def is_update_stockhist(stock):
+    try:
+        if cache2[stock]['date'] == datetime.datetime.today().strftime('%Y-%m-%d'):
+            return True
+        else:
+            return False 
+    except:
+        return False
+
+
+

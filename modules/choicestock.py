@@ -27,21 +27,6 @@ class ChoiceStock(Basebot):
                 )
             )
 
-# = [
-#                         QuickReplyButton(
-#                             action = MessageAction('台積電','2330'),
-#                         ),
-#                         QuickReplyButton(
-#                             action= MessageAction('中華電','2412')
-#                         ),
-#                         QuickReplyButton(
-#                             action= MessageAction('中鋼', '2002')
-#                         ),
-#                         QuickReplyButton(
-#                             action=MessageAction('元大台灣50','0050')
-#                         )
-#                     ]
-
             return [reply]
         except:
             return [TextSendMessage('發生錯誤')]

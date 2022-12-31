@@ -135,7 +135,7 @@ small_red_font = {
     'weight':   'bold'
 }
 
-# testKchart = K10Chart('uid','k2412 2012-1-1', True)
+# testKchart = K10Chart('uid','k102412 2012-1-1', True)
 # testKchart.dosomething()
 
             

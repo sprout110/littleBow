@@ -33,7 +33,8 @@ class KChart(Basebot):
             stock = str(msglist[0][1:5])
             startDate = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
             endDate = datetime.datetime(y,m,d) + datetime.timedelta(days=1)
-            if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 60*60*24*120:
+            #if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 60*60*24*130:
+            if datetime.datetime.strptime(msglist[1], '%Y-%m-%d') >= datetime.datetime(y + ((m-3)//12), (m-3) % 12, 1):
                 tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'candle', test)
             else:
                 tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
@@ -44,7 +45,8 @@ class KChart(Basebot):
         elif len(msglist) == 3:
             stock = str(msglist[0][1:5])
             startDate = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
-            endDate = datetime.datetime.strptime(msglist[2], '%Y-%m-%d')
+            endDate = datetime.datetime.strptime(msglist[2], '%Y-%m-%d') + datetime.timedelta(days=1)
+            #print(endDate)
             tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
 
         if test == True:

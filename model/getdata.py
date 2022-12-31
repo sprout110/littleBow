@@ -1,6 +1,7 @@
 import pandas as pd
 import yfinance as yf
 import datetime  as datetime
+import model.mydb as mydb
 
 histEndDate = '2022-10-01'
 
@@ -24,9 +25,13 @@ def getHistData(stock, startDate, endDate):
 def getYahooData(stock, startDate):
     df = yf.download(stock +".tw", start = startDate)
     #updateHistData
-    if len(df)>0:
+    if len(df)>0 and not mydb.is_update_stockhist(stock):
+        #print('update' + stock)
         pd.concat([getHistData(stock, '2012-01-01', startDate), df]
-                    ).to_csv(r'data/k' + stock.lower() + '.tw.csv') 
+                    ).to_csv(r'data/k' + stock.lower() + '.tw.csv')
+        mydb.has_update_stockhist(stock)
+    #else:
+        #print('not update' + stock) 
     return df
     
 def getStockInfo(stock):
