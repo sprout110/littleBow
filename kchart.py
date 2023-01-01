@@ -1,4 +1,4 @@
-from linebot.models import (ImageSendMessage)
+from linebot.models import (ImageSendMessage, TextSendMessage)
 import matplotlib as mpl
 import numpy as np
 import matplotlib.font_manager as font_manager
@@ -23,40 +23,43 @@ class KChart(Basebot):
 
         tempFile = ''
 
-        if len(msglist) == 1:
-            stock = str(self.msg[1:5])
-            startDate = datetime.datetime(y-1, m, 1)
-            endDate = datetime.datetime(y,m,d) + datetime.timedelta(days=1)
-            tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
-
-        elif len(msglist) == 2:
-            stock = str(msglist[0][1:5])
-            startDate = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
-            endDate = datetime.datetime(y,m,d) + datetime.timedelta(days=1)
-            #if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 60*60*24*130:
-            if datetime.datetime.strptime(msglist[1], '%Y-%m-%d') >= datetime.datetime(y + ((m-3)//12), (m-3) % 12, 1):
-                tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'candle', test)
-            else:
+        try:
+            if len(msglist) == 1:
+                stock = str(self.msg[1:5])
+                startDate = datetime.datetime(y-1, m, 1)
+                endDate = datetime.datetime(y,m,d) + datetime.timedelta(days=1)
                 tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
-            
+
+            elif len(msglist) == 2:
+                stock = str(msglist[0][1:5])
+                startDate = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
+                endDate = datetime.datetime(y,m,d) + datetime.timedelta(days=1)
+                #if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 60*60*24*130:
+                if datetime.datetime.strptime(msglist[1], '%Y-%m-%d') >= datetime.datetime(y + ((m-3)//12), (m-3) % 12, 1):
+                    tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'candle', test)
+                else:
+                    tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
+                
+                if test == True:
+                    mpf.show()
+
+            elif len(msglist) == 3:
+                stock = str(msglist[0][1:5])
+                startDate = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
+                endDate = datetime.datetime.strptime(msglist[2], '%Y-%m-%d') + datetime.timedelta(days=1)
+                #print(endDate)
+                tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
+
             if test == True:
-                mpf.show()
+                imgurImg = NullObj
+            else:
+                imgurImg = getimg.getImgurImg(stock, tempFile)
 
-        elif len(msglist) == 3:
-            stock = str(msglist[0][1:5])
-            startDate = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
-            endDate = datetime.datetime.strptime(msglist[2], '%Y-%m-%d') + datetime.timedelta(days=1)
-            #print(endDate)
-            tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
+            self.result = stock + ' KChart OK imgUrl ' + imgurImg.link
 
-        if test == True:
-            imgurImg = NullObj
-        else:
-            imgurImg = getimg.getImgurImg(stock, tempFile)
-
-        self.result = stock + ' KChart OK imgUrl ' + imgurImg.link
-
-        return [ImageSendMessage(original_content_url = imgurImg.link, preview_image_url = imgurImg.link)]
+            return [ImageSendMessage(original_content_url = imgurImg.link, preview_image_url = imgurImg.link)]
+        except:
+            return [TextSendMessage("目前尚無資料或系統忙碌中。。。")]
 
     def plot_stcok_k_chart(self, 
                             stock, 
