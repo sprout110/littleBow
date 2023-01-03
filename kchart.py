@@ -104,7 +104,7 @@ class KChart(Basebot):
         ax2.set_ylabel('macd')
         ax3.set_ylabel('volume')
 
-        fig.text(0.40, 0.96, stock.upper() + '.TW - ' + stockInfo['stockName'].iloc[0])
+        fig.text(0.40, 0.94, stock.upper() + '.TW - ' + stockInfo['stockName'].iloc[0], **title_font)
         fig.text(0.08, 0.91, f'{last_data.name.date()}')
         fig.text(0.18, 0.91, '最高: ')
         fig.text(0.21, 0.91, f'{np.round(last_data["High"], 3)}')
@@ -229,11 +229,12 @@ myStyle = mpf.make_mpf_style(
 
 title_font = {
     'fontname': zhfont.get_name(), 
-              'size':     '16',
-              'color':    'black',
-              'weight':   'bold',
-              'va':       'bottom',
-              'ha':       'center'}
+    'size':'22',
+    'color':'black',
+    'weight':'bold',
+    'va':'bottom',
+    'ha':'center'
+}
 
 large_red_font = {
     'fontname': 'Arial',

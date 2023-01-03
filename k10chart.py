@@ -90,8 +90,7 @@ class K10Chart(Basebot):
         fig = mpf.figure(style = myStyle, figsize=(12,8))
         ax1 = fig.add_axes([0.06, 0.15, 0.80, 0.75])
 
-        fig.text(0.40, 0.96, stock.upper() + '.TW - ' + stockInfo['stockName'].iloc[0])
-        
+        fig.text(0.40, 0.94, stock.upper() + '.TW - ' + stockInfo['stockName'].iloc[0], **title_font)
         fig.text(0.08, 0.91, f'{last_data.name.date()}')
         fig.text(0.18, 0.91, '最高: ')
         fig.text(0.21, 0.91, f'{np.round(last_data["High"], 3)}')
@@ -133,6 +132,17 @@ small_red_font = {
     'size':     '11',
     'color':    'red',
     'weight':   'bold'
+}
+
+
+
+title_font = {
+    'fontname': zhfont.get_name(), 
+    'size':'22',
+    'color':'black',
+    'weight':'bold',
+    'va':'bottom',
+    'ha':'center'
 }
 
 # testKchart = K10Chart('uid','k102412 2012-1-1', True)

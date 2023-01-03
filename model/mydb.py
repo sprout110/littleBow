@@ -68,11 +68,14 @@ defaultFavorite = [
                 'stock' : '0050',
                 'stockName' : '台灣50'
             }, {
-                'stock' : '2020',
-                'stockName' : '美亞'
+                'stock' : '1737',
+                'stockName' : '臺鹽'
             }, {
                 'stock' : '1216',
                 'stockName' : '統一'
+            }, {
+                'stock' : '2891',
+                'stockName' : '中信金'
             }
         ]
 
