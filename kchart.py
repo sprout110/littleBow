@@ -9,6 +9,7 @@ import datetime
 from model.basebot import Basebot
 import model.getdata as getdata
 import model.getimg as getimg
+import pandas as pd
 
 class KChart(Basebot):
     def __init__(self, uid, msg):
@@ -22,23 +23,26 @@ class KChart(Basebot):
         d = datetime.date.today().day
 
         tempFile = ''
-
+        df = pd.DataFrame()
+        stock = ''
         try:
             if len(msglist) == 1:
                 stock = str(self.msg[1:5])
                 startDate = datetime.datetime(y-1, m, 1)
                 endDate = datetime.datetime(y,m,d) + datetime.timedelta(days=1)
-                tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
+                df = getdata.getData(stock, startDate, endDate)
+                tempFile = self.plot_stcok_k_chart(df, stock , startDate, endDate, 'line', test)
 
             elif len(msglist) == 2:
                 stock = str(msglist[0][1:5])
                 startDate = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
                 endDate = datetime.datetime(y,m,d) + datetime.timedelta(days=1)
+                df = getdata.getData(stock, startDate, endDate)
                 #if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 60*60*24*130:
                 if datetime.datetime.strptime(msglist[1], '%Y-%m-%d') >= datetime.datetime(y + ((m-3)//12), (m-3) % 12, 1):
-                    tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'candle', test)
+                    tempFile = self.plot_stcok_k_chart(df, stock , startDate, endDate, 'candle', test)
                 else:
-                    tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
+                    tempFile = self.plot_stcok_k_chart(df, stock , startDate, endDate, 'line', test)
                 
                 if test == True:
                     mpf.show()
@@ -48,7 +52,8 @@ class KChart(Basebot):
                 startDate = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
                 endDate = datetime.datetime.strptime(msglist[2], '%Y-%m-%d') + datetime.timedelta(days=1)
                 #print(endDate)
-                tempFile = self.plot_stcok_k_chart(stock , startDate, endDate, 'line', test)
+                df = getdata.getData(stock, startDate, endDate)
+                tempFile = self.plot_stcok_k_chart(df, stock , startDate, endDate, 'line', test)
 
             if test == True:
                 imgurImg = NullObj
@@ -56,12 +61,16 @@ class KChart(Basebot):
                 imgurImg = getimg.getImgurImg(stock, tempFile)
 
             self.result = stock + ' KChart OK imgUrl ' + imgurImg.link
-
-            return [ImageSendMessage(original_content_url = imgurImg.link, preview_image_url = imgurImg.link)]
+            
+            stockInfo = getdata.getStockInfo(stock)
+            
+            return [ImageSendMessage(original_content_url = imgurImg.link, preview_image_url = imgurImg.link),
+                    TextSendMessage(stockInfo['stockName'].iloc[0] + str(df[['Open','Close']].tail(5)))]
         except:
             return [TextSendMessage("目前尚無資料或系統忙碌中。。。")]
 
     def plot_stcok_k_chart(self, 
+                            df,
                             stock, 
                             startDate, 
                             endDate,
@@ -71,7 +80,7 @@ class KChart(Basebot):
         if test == False:
             mpl.use('Agg')
 
-        df = getdata.getData(stock, startDate, endDate)
+        
         last_data = df.iloc[-1]
         last2_data = df.iloc[-2]
         stockInfo = getdata.getStockInfo(stock)
