@@ -6,19 +6,24 @@ import model.mydb as mydb
 histEndDate = '2023-01-01'
 
 def getData(stock, startDate, endDate):
-    if endDate < datetime.datetime.strptime(histEndDate, '%Y-%m-%d'):
+    if endDate <= datetime.datetime.strptime(histEndDate, '%Y-%m-%d'):
         return getHistData(stock, startDate, endDate)
 
     if startDate >= datetime.datetime.strptime(histEndDate, '%Y-%m-%d'):
-        return getYahooData(stock, startDate)
+        df = getYahooData(stock, startDate)
+        #print(df)
+        #df.set_index("Date" , inplace=True)
+        #df.index = pd.to_datetime(df.index)
+        #print(df[df.index<endDate])
+        return df[df.index<endDate]
 
-    # temp1 = getHistData(stock, startDate, datetime.datetime.strptime(histEndDate, '%Y-%m-%d'))
-    # print(temp1.tail(5))
-    # temp2 = getYahooData(stock, datetime.datetime.strptime(histEndDate, '%Y-%m-%d'))
-    # print(temp2.tail(5))
+    #temp1 = getHistData(stock, startDate, datetime.datetime.strptime(histEndDate, '%Y-%m-%d'))
+    #print(temp1.tail(5))
+    temp2 = getYahooData(stock, datetime.datetime.strptime(histEndDate, '%Y-%m-%d'))
+    #print(temp2.tail(5))
 
     return pd.concat([getHistData(stock, startDate, datetime.datetime.strptime(histEndDate, '%Y-%m-%d')), 
-            getYahooData(stock, datetime.datetime.strptime(histEndDate, '%Y-%m-%d'))])
+            temp2[temp2.index<endDate]])
 
 def getHistData(stock, startDate, endDate):
     saveFile = r'k' + stock + '.tw.csv'
@@ -27,7 +32,8 @@ def getHistData(stock, startDate, endDate):
     data.index = pd.to_datetime(data.index)
     # print(data.head(5))
     # print(data[data.index>startDate][data[data.index>startDate].index<endDate])
-    return data[data.index>startDate][data[data.index>startDate].index<endDate]
+    # print(data[data.index>=startDate])
+    return data[data.index>=startDate][data[data.index>=startDate].index<endDate]
 
 def getYahooData(stock, startDate):
     df = yf.download(stock +".tw", start = startDate)
