@@ -65,7 +65,7 @@ class KChart(Basebot):
             stockInfo = getdata.getStockInfo(stock)
             
             return [ImageSendMessage(original_content_url = imgurImg.link, preview_image_url = imgurImg.link),
-                    TextSendMessage(stockInfo['stockName'].iloc[0] + str(df[['Open','Close']].tail(5)))]
+                    TextSendMessage(stockInfo['stockName'].iloc[0] + str(df[['Open','Close']].round({'Open':2,'Close':2}).tail(5)))]
         except:
             return [TextSendMessage("目前尚無資料或系統忙碌中。。。")]
 
@@ -143,14 +143,15 @@ class KChart(Basebot):
                     type = myType,
                     ylabel_lower = 'Volume',
                     datetime_format = '%Y-%m-%d',
-                    ylabel = stockInfo['stockName'].iloc[0] +' 股價 週線-紅 月線-橙 半年-黃 年線-綠'
+                    ylabel = stockInfo['stockName'].iloc[0] +' 股價 週線-紅 月線-橙 半年-黃 年線-綠',
+                    show_nontrading = True
         )
 
         if stock == '2412' and myType == 'candle':
             kwargs['ylim'] = (104, 126)
-            kwargs['xrotation'] = 45
+            kwargs['xrotation'] = 0
         elif myType == 'candle':
-            kwargs['xrotation'] = 45
+            kwargs['xrotation'] = 0
 
         mpf.plot(
             df,
@@ -158,7 +159,8 @@ class KChart(Basebot):
             #type = myType
             volume = ax3,
             addplot = apds,
-            **kwargs
+            **kwargs,
+            scale_width_adjustment=dict(volume=0.5) #,candle=1.35)
         )
     
         fig.savefig(tempFile)

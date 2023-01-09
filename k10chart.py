@@ -27,7 +27,7 @@ class K10Chart(Basebot):
             stock = str(msglist[0][3:7])
             startDate = datetime.datetime.strptime(msglist[1], '%Y-%m-%d')
             endDate = datetime.datetime(y, m, d) + datetime.timedelta(seconds=-1)
-        
+            
             figName = stock + startDate.strftime("-%Y%m%d") + endDate.strftime("-%Y%m%d") + ".png"
             if self.test == True:
                 self.plot_stcok_k10_chart(stock , startDate, endDate, figName)
@@ -56,6 +56,7 @@ class K10Chart(Basebot):
     
         last_data = df.iloc[-1]
         last2_data = df.iloc[-2]
+        
         stockInfo = getdata.getStockInfo(stock)
 
         #MAV
