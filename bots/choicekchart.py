@@ -7,7 +7,7 @@ class ChoiceKChart(Basebot):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
 
-    def dosomething(self):
+    def Process(self):
         try:
             y = datetime.date.today().year
             m = datetime.date.today().month

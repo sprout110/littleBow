@@ -22,7 +22,7 @@ class KChart(Basebot):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
 
-    def dosomething(self, test = False):
+    def Process(self, test = False):
         msglist = self.msg.split()
 
         y = datetime.date.today().year

@@ -6,7 +6,7 @@ class ChoiceStock(Basebot):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
 
-    def dosomething(self):
+    def Process(self):
         try:
             userSetting = mydb.read_user_setting(self.uid)
             # print(userSetting[0])

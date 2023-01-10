@@ -16,7 +16,7 @@ class K10Chart(Basebot):
         super().__init__(uid, msg)
         self.test = test
 
-    def dosomething(self):
+    def Process(self):
         msglist = self.msg.split()
 
         y = datetime.date.today().year

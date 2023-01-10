@@ -8,7 +8,7 @@ class StockNow(Basebot):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
 
-    def dosomething(self):
+    def Process(self):
         #stock = str(self.msg[1:5])
         
         try:

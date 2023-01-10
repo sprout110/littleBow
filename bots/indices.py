@@ -15,7 +15,7 @@ class Indices(Basebot):
     def __init__(self, uid, msg):
         super().__init__(uid, msg)
 
-    def dosomething(self):
+    def Process(self):
         msglist = self.msg.split()
         indices = msglist[0]
         y = datetime.date.today().year

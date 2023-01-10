@@ -11,7 +11,7 @@ class WriteSettings(Basebot):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
 
-    def dosomething(self):
+    def Process(self):
         try:
             stock = self.msg
             settings = mydb.read_user_setting(self.uid)

@@ -1,16 +1,16 @@
 import re
-from modules.echo import Echo
-from modules.stocknow import StockNow
-from modules.howto import HowTo
-from modules.showsettings import ShowSettings
-from modules.writesettings import WriteSettings
-from modules.choicestock import ChoiceStock
-from modules.choicekchart import ChoiceKChart
-from kchart import KChart
-from k10chart import K10Chart
-from indices import Indices
+from bots.echo import Echo
+from bots.stocknow import StockNow
+from bots.howto import HowTo
+from bots.showsettings import ShowSettings
+from bots.writesettings import WriteSettings
+from bots.choicestock import ChoiceStock
+from bots.choicekchart import ChoiceKChart
+from bots.kchart import KChart
+from bots.k10chart import K10Chart
+from bots.indices import Indices
 
-def UserSay(uid, msg):
+def SelectBot(uid, msg):
     #print(msg)
     if re.match('^s[0-9]{4}', msg.lower()):
         return StockNow(uid, msg)

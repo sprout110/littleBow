@@ -6,9 +6,9 @@ class Basebot:
         self.msg = msg
         self.result = ''
 
-    def dosomething(self):
+    def Process(self):
         self.result = '使用者代號 "' + str(self.uid) + '" 說 "' + self.msg + '"'
-        return TextSendMessage(self.result)
+        return TextSendMessage('Hello, World!')
 
 
 """ 

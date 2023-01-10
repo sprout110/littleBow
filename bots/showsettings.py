@@ -6,7 +6,7 @@ class ShowSettings(Basebot):
     def __init__(self, uid,  msg):
         super().__init__(uid, msg)
 
-    def dosomething(self):
+    def Process(self):
         dataList = mydb.read_user_setting(self.uid)
         if len(dataList) == 0:
             mydb.write_user_setting(self.uid, '2412')
