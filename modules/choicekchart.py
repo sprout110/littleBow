@@ -35,8 +35,8 @@ class ChoiceKChart(Basebot):
                             'k10' + dataList[0]['stock'] + ' ' + str(y-10) + '-' + str(m) + '-1')
                         ),
                         QuickReplyButton(
-                            action= MessageAction('二十年', 
-                            'k10' + dataList[0]['stock'] + ' ' + str(y-20) + '-' + str(m) + '-1')
+                            action= MessageAction('2000年至今', 
+                            'k10' + dataList[0]['stock'] + ' 2000-1-1')
                         )
                     ]
 

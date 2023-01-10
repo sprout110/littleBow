@@ -144,7 +144,7 @@ def read_user_setting(uid):
 cache2 = Cache(maxsize=1600)
 def has_update_stockhist(stock):
     cache2[stock] = {
-        'date' : datetime.datetime.today().strftime('%Y-%m-%d')
+        'date': datetime.datetime.today().strftime('%Y-%m-%d')
     }
 
 def is_update_stockhist(stock):

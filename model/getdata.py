@@ -36,18 +36,7 @@ def getHistData(stock, startDate, endDate):
     return data[data.index>=startDate][data[data.index>=startDate].index<endDate]
 
 def getYahooData(stock, startDate):
-    df = yf.download(stock +".tw", start = startDate)
-    # print(startDate)
-    # print(df.head(5))
-    #updateHistData
-    if df.shape[0]>0 and not mydb.is_update_stockhist(stock):
-        saveFile = r'k' + stock + '.tw.csv'
-        pd.concat([getHistData(stock, '2002-01-01', startDate), df]
-                    ).to_csv(saveFile)
-        mydb.has_update_stockhist(stock)
-    #else:
-        #df = pd.DataFrame()
-    return df
+    return yf.download(stock +".tw", start = startDate)
     
 def getStockInfo(stock):
     df = pd.read_csv(r'stocklist.csv', converters={'stockId': str})
