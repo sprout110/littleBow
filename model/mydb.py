@@ -115,13 +115,16 @@ def read_user_setting(uid):
             db = constructor()
             collect = db[Favorite]
             myFavorites = list(collect.find({"uid": uid}))
+            print(myFavorites)
             favoriteArray = []
             for item in myFavorites:
                 favoriteArray.append({
                     'stock': item['stock'],
                     'stockName': getdata.getStockInfo(item['stock'])['stockName'].iloc[0]
                 })
+                print(item['stock'])
             
+            print(favoriteArray)
             cache[uid] = {
                 'stock' : '2412', 
                 'favorite' : favoriteArray

@@ -9,6 +9,7 @@ from bots.choicekchart import ChoiceKChart
 from bots.kchart import KChart
 from bots.k10chart import K10Chart
 from bots.indices import Indices
+from bots.flex01 import Flex01
 
 def SelectBot(uid, msg):
     #print(msg)
@@ -30,6 +31,8 @@ def SelectBot(uid, msg):
         return StockNow(uid, msg)
     elif '＠k線圖' == msg:
         return ChoiceKChart(uid, msg)
+    elif 'Flex01' == msg:
+        return Flex01(uid, msg)
     elif re.match('^[0-9]{4}$', msg):
         return WriteSettings(uid, msg)
     else:
