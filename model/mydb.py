@@ -91,20 +91,12 @@ def insert_user_setting(uid, stock):
         'stock' : stock
     }
 
-    # db=constructor()
-    # collect = db[Favorite]
-    # for item in favorite:
-    #     collect.insert_one({
-    #         "uid": uid,
-    #         "stock": stock,
-    #         "date_info": datetime.datetime.utcnow()
-    #     })  
-
 def update_user_setting(uid, stock):
     cache[uid]['stock'] = stock
 
 def read_user_setting(uid):
     readDB = False
+    #uid = uid + 'test'
     try:
         cache[uid]
     except:
@@ -112,36 +104,71 @@ def read_user_setting(uid):
 
     if readDB:
         try:
-            db = constructor()
-            collect = db[Favorite]
-            myFavorites = list(collect.find({"uid": uid}))
-            print(myFavorites)
-            favoriteArray = []
-            for item in myFavorites:
-                favoriteArray.append({
-                    'stock': item['stock'],
-                    'stockName': getdata.getStockInfo(item['stock'])['stockName'].iloc[0]
-                })
-                print(item['stock'])
-            
-            print(favoriteArray)
-            cache[uid] = {
-                'stock' : '2412', 
-                'favorite' : favoriteArray
-            }
+            myFavorites = readFavoriteFromDB(uid)
+            #print(myFavorites)
+            if len(myFavorites) == 0:
+                cache[uid] = {
+                    'stock' : '2412', 
+                    'favorite' : defaultFavorite
+                }
+                for item in defaultFavorite:
+                    insertFavorite(uid, item['stock'])
+            else:    
+                cache[uid] = {
+                    'stock' : '2412', 
+                    'favorite' : myFavorites
+                }
         except:
             cache[uid] = {
                 'stock' : '2412', 
                 'favorite' : defaultFavorite
             }
       
-    cel = [{
+    settings = [{
         'uid' : uid, 
         'stock' : cache[uid]['stock'],
         'favorite' : cache[uid]['favorite']
     }]
 
-    return cel
+    return settings
+
+def read_user_favorites_fromdb(uid):
+    myFavorites = readFavoriteFromDB(uid)
+
+    cache[uid] = {
+        'stock' : cache[uid]['stock'], 
+        'favorite' : myFavorites
+    }
+
+def insertFavorite(uid, stock):
+    db=constructor()
+    collect = db[Favorite]
+    collect.insert_one({
+        "uid": uid,
+        "stock": stock, 
+        "updateTime": datetime.datetime.utcnow() 
+    })
+
+def removeFavorit(uid, stock):
+    db=constructor()
+    collect = db[Favorite]
+    collect.delete_many({'uid':uid, 'stock':stock})
+
+def readFavoriteFromDB(uid):
+    db = constructor()
+    collect = db[Favorite]
+    myFavorites = list(collect.find({"uid": uid}))
+    myFavoritesDict = {}
+    for item in myFavorites:
+        try:
+            myFavoritesDict[item['stock']] = { 
+                'stock':item['stock'],
+                'stockName': getdata.getStockInfo(item['stock'])['stockName'].iloc[0]
+            }
+        except:
+            print("An exception occurred")
+
+    return myFavoritesDict.values()
 
 # 判斷今日是否已更新 csv 檔
 cache2 = Cache(maxsize=1600)
@@ -160,4 +187,6 @@ def is_update_stockhist(stock):
         return False
 
 
-
+# db=constructor()
+# collect = db[Favorite]
+# collect.delete_many({'uid':'Uf005f1db11566194e221f598c3f0cb92', 'stock':'4205'})

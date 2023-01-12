@@ -9,16 +9,11 @@ class ChoiceStock(Basebot):
     def Process(self):
         try:
             userSetting = mydb.read_user_setting(self.uid)
-            # print(userSetting[0])
-            # print(userSetting[0]['favorite'])
             items = []
             for item in userSetting[0]['favorite']:
-                # print(item)
                 items.append(QuickReplyButton(
                             action = MessageAction(item['stockName'],item['stock']),
                         ))
-
-            # print(items)
 
             reply = TextSendMessage(
                 text = '請選擇股票：',

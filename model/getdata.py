@@ -1,5 +1,7 @@
 import pandas as pd
 import yfinance as yf
+from  FinMind.data import DataLoader
+FM = DataLoader()
 import datetime  as datetime
 import model.mydb as mydb
 
@@ -27,12 +29,13 @@ def getData(stock, startDate, endDate):
 
 def getHistData(stock, startDate, endDate):
     saveFile = r'k' + stock + '.tw.csv'
-    # print(saveFile)
+    #print(saveFile)
     data = pd.read_csv(saveFile,  header=0, index_col=0)
     data.index = pd.to_datetime(data.index)
-    # print(data.head(5))
+    #print(data.head(5))
     # print(data[data.index>startDate][data[data.index>startDate].index<endDate])
     # print(data[data.index>=startDate])
+    #print(data[data.index>=startDate][data[data.index>=startDate].index<endDate])
     return data[data.index>=startDate][data[data.index>=startDate].index<endDate]
 
 def getYahooData(stock, startDate):

@@ -10,6 +10,11 @@ from bots.kchart import KChart
 from bots.k10chart import K10Chart
 from bots.indices import Indices
 from bots.flex01 import Flex01
+from bots.readdbfavorite import ReadDBFavorite
+from bots.insertfavorite import InsertFavorite
+from bots.deletefavorite import DeleteFavorite
+from bots.adjustfavorite import AdjustFavorite
+from bots.choiceaddstock import ChoiceAddStock
 
 def SelectBot(uid, msg):
     #print(msg)
@@ -35,6 +40,17 @@ def SelectBot(uid, msg):
         return Flex01(uid, msg)
     elif re.match('^[0-9]{4}$', msg):
         return WriteSettings(uid, msg)
+    elif re.match('^新增[0-9]{4}$', msg):
+        return InsertFavorite(uid, msg)
+    elif re.match('^刪除[0-9]{4}$', msg):
+        return DeleteFavorite(uid, msg)
+    elif re.match('^＠更新選股',msg):
+        return ReadDBFavorite(uid, msg)
+    elif re.match('^＠增刪選股',msg):
+        return AdjustFavorite(uid, msg)
+    elif re.match('^＠新增選股',msg):
+        print('here')
+        return ChoiceAddStock(uid, msg)
     else:
         return Echo(uid, msg)
 

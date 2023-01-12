@@ -10,6 +10,7 @@ from model.basebot import Basebot
 import model.getdata as getdata
 import model.getimg as getimg
 import pandas as pd
+import conf.settings as settings
 
 class KChart(Basebot):
     def __init__(self, uid, msg):
@@ -33,7 +34,11 @@ class KChart(Basebot):
                 if test:
                     df = getdata.getHistData(stock, startDate, endDate)
                 else:
-                    df = getdata.getData(stock, startDate, endDate)
+                    if stock in settings.Exclude_Stock:
+                        df = getdata.getHistData(stock, startDate, endDate)
+                    else:
+                        df = getdata.getData(stock, startDate, endDate)
+                
                 tempFile = self.plot_stcok_k_chart(df, stock , 'line', test)
 
             elif len(msglist) == 2:
@@ -43,7 +48,11 @@ class KChart(Basebot):
                 if test:
                     df = getdata.getHistData(stock, startDate, endDate)
                 else:
-                    df = getdata.getData(stock, startDate, endDate)
+                    if stock in settings.Exclude_Stock:
+                        df = getdata.getHistData(stock, startDate, endDate)
+                    else:
+                        df = getdata.getData(stock, startDate, endDate)
+                    
                 #if (datetime.datetime.now() - datetime.datetime.strptime(msglist[1], '%Y-%m-%d')).total_seconds() < 60*60*24*130:
                 if datetime.datetime.strptime(msglist[1], '%Y-%m-%d') >= datetime.datetime(y + ((m-3)//12), (m-3) % 12, 1):
                     tempFile = self.plot_stcok_k_chart(df, stock , 'candle', test)
@@ -60,7 +69,10 @@ class KChart(Basebot):
                     df = getdata.getHistData(stock, startDate, endDate)
                     print(df)
                 else:
-                    df = getdata.getData(stock, startDate, endDate)
+                    if stock in settings.Exclude_Stock:
+                        df = getdata.getHistData(stock, startDate, endDate)
+                    else:
+                        df = getdata.getData(stock, startDate, endDate)
                 tempFile = self.plot_stcok_k_chart(df, stock , 'line', test)
                     
             if test == True:
